@@ -19,7 +19,7 @@ Realiza a criação do navegador
     except Exception as e:
         raise Exception(f"Impossivel criar o navegador, detalhes: {str(e)}")
 
-def realizar_login(navegador: webdriver.Chrome) -> webdriver.Chrome:
+def realizar_login(navegador: webdriver.Chrome, ambiente) -> webdriver.Chrome:
     """
 Realiza o login no Oi360
 
@@ -30,7 +30,11 @@ Saída:
     O navegador com instância ativa do Oi360
     """
 
+    from selenium.webdriver.common.by import By 
+
     try:
+        navegador.get(ambiente)
+        str(input("Pressione enter após o login ..."))
         return navegador
     except Exception as e:
         raise Exception(f"Impossivel logar no Oi360, detalhes: {str(e)}")

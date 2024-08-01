@@ -4,3 +4,13 @@
 2024-07-25 12:48:00,281 - INFO - Total de registros validados: 3051
 2024-07-25 12:48:00,281 - INFO - Total de registros nao validados: 0
 2024-07-25 12:48:00,281 - INFO - Bot finalizado!
+2024-07-26 16:47:38,150 - INFO - Bot iniciado!
+2024-07-26 16:47:38,233 - INFO - ====== WebDriver manager ======
+2024-07-26 16:47:39,157 - INFO - Get LATEST chromedriver version for google-chrome
+2024-07-26 16:47:39,162 - DEBUG - Starting new HTTPS connection (1): googlechromelabs.github.io:443
+2024-07-26 16:47:39,223 - DEBUG - https://googlechromelabs.github.io:443 "GET /chrome-for-testing/latest-patch-versions-per-build.json HTTP/1.1" 200 6462
+2024-07-26 16:47:39,226 - INFO - Get LATEST chromedriver version for google-chrome
+2024-07-26 16:47:39,227 - DEBUG - Starting new HTTPS connection (1): googlechromelabs.github.io:443
+2024-07-26 16:47:39,276 - DEBUG - https://googlechromelabs.github.io:443 "GET /chrome-for-testing/latest-patch-versions-per-build.json HTTP/1.1" 200 6462
+2024-07-26 16:47:39,279 - INFO - Driver [C:\Users\Optiplex_3050\.wdm\drivers\chromedriver\win64\127.0.6533.72\chromedriver-win32/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2024-07-26 16:47:39,280 - INFO - Deu erro no bot. Detalhes: Impossivel criar o navegador, detalhes: [WinError 193] %1 não é um aplicativo Win32 válido

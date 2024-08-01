@@ -36,9 +36,12 @@ Raíz do código fonte
     """
 
     from settings import path_entrada, path_saida, setup_log, path_log
-    from modules import ler_controle_qualidade, tratar_controle_qualidade, exportar_controle_qualidade
+    from modules import ler_controle_qualidade, tratar_controle_qualidade, exportar_controle_qualidade, criar_navegador, realizar_login
 
     setup_log('bot_consulta_faturas', path_log)
+
+    browser = criar_navegador()
+    realizar_login(browser, 'https://oi360.oi.net.br/prweb/PRServletCustom/AX6P2laLe91D09R0jTjfNJdv0u0s3qcA*/!STANDARD?pyActivity=Data-Portal.ShowDesktop#!')
 
     arquivo_input = os.path.join(path_entrada, "controle_qualidade.xlsx")
     planilha_input = "Safras em Tratamento"

@@ -18,3 +18,30 @@ Processo:
              
 Gerar o arquivo com as colunas 
 -  DOC; VALOR; STATUS; DATA
+
+# EMPRESARIAL
+- Primeiro formulário
+  - Selecionar: Oi360 Empresarial
+  - Clicar: INICIAR
+
+- Segundo formulário
+  - Digitar o cnpj em: Pesquise por CNPJ do cliente / novo cliente para iniciar a sondagem
+  - Clicar: AVANÇAR
+
+- Terceiro formulário
+  - 
+
+    > NENHUMA FATURA PENDENTE
+
+
+    > FATURA PENDENTE
+
+    > NOVO CLIENTE
+
+# VAREJO
+
+    > NENHUMA FATURA PENDENTE
+
+    > FATURA PENDENTE
+
+    > NOVO CLIENTE

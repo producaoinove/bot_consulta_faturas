@@ -1,0 +1,49 @@
+Informações do Oi 360:
+
+Para acessar as faturas
+
+Varejo: 
+
+Primeiro formulário:
+Selecione "Varejo" 
+
+Segundo formulário:
+selecione uma "TR"
+digite um CPF
+selecione o produto , clique em "avançar"
+
+Terceiro formulário:
+Clique em "serviços Oi"
+Clique em "iniciar atendimento" 
+
+Quarto formulário:
+Clique em lique em "fatura e segunda via" 
+
+Quinta formulário:
+Armazenar Valor
+Armazenar Vencimento
+Armazenar Satus de pagamento
+
+Empresarial: 
+
+Primeiro formulário:
+Selecione "Empresarial" na tela inicial
+
+Segundo formulário:
+digite um CNPJ
+selecione o produto
+clique em "avançar"
+
+Terceiro formulário:
+clique em "serviços Oi" 
+clique em "iniciar atendimento" e clique em "fatura e segunda via" 
+
+Novo cliente: Ocorre quando o plano está bloqueado por falta de pagamento ou quando está cancelado
+
+
+A informações que precisamos são:
+Valor, Vencimento e Status de pagamento (Pago ou em aberto)
+
+No Oi 360, o status de pagamento pode aparecer como "pago", "não pago" ou "vencido".
+
+produto (Normalmente começa com "1-1")
