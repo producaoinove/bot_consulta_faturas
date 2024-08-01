@@ -1,7 +1,9 @@
 import os
 import pandas as pd
+from selenium import webdriver
+from modules.navegador import iniciar_atendimento
 
-def coletar_informacoes(documento: str, tipo_pessoa: str) -> tuple:
+def coletar_informacoes(documento: str, tipo: str, browser : webdriver.Chrome, logging) -> tuple:
     """
 Recebe um documento (CNPJ ou CPF) e retorna os dados exigidos (VALOR; STATUS; DATA)
 
@@ -14,25 +16,43 @@ Saída:
 
     """
 
-    if 'CPF' in tipo_pessoa.upper():
+    if 'CPF' in tipo.upper():
         tipo_p = "VAREJO"
-    elif 'MEI' in tipo_pessoa.upper() or 'EMP' in tipo_pessoa.upper():
+        atendimento = iniciar_atendimento(browser, documento, tipo_p, logging)
+        status = atendimento[0]
+        data = atendimento[1]
+        valor = atendimento[2]
+        
+        if status == None:
+            status = "NOVO CLIENTE"
+            valor = ""
+            data = ""
+            
+    elif 'MEI' in tipo.upper() or 'EMP' in tipo.upper():
         tipo_p = "EMPRESARIAL"
+        atendimento = iniciar_atendimento(browser, documento, tipo_p, logging)
+        status = atendimento[0]
+        data = atendimento[1]
+        valor = atendimento[2]
+        if status == None:
+            status = "NOVO CLIENTE"
+            valor = ""
+            data = ""
     else:
         raise Exception("O tipo_pessoa passado é inválido!")
 
-    try:
-        valor = "R$ 50,00"
-        status = "PENDENTE"
-        data = "24/07/2024"
-    except:
-        valor, status, data = None, None, None
+    # try:
+    #     valor = "R$ 50,00"
+    #     status = "PENDENTE"
+    #     data = "24/07/2024"
+    # except:
+    #     valor, status, data = None, None, None
 
     return (valor, status, data)
 
-def main():
+def main(logging):
     """
-Raíz do código fonte
+    Raíz do código fonte
     """
 
     from settings import path_entrada, path_saida, setup_log, path_log
@@ -55,8 +75,9 @@ Raíz do código fonte
     for _, linhas in df.iterrows():
         doc = linhas['DOC']
         tipo_p = linhas['TIPO_CLIENTE']
-        valor, status, data = coletar_informacoes(doc, tipo_p)
+        valor, status, data = coletar_informacoes(doc, tipo_p, browser, logging)
         dados_extraidos.append((valor, status, data))
+        
     df[['VALOR', 'STATUS', 'DATA']] = pd.DataFrame(dados_extraidos, index=df.index)
     df = df[['DOC', 'VALOR', 'STATUS', 'DATA']]
     res =  exportar_controle_qualidade(df, arquivo_output)

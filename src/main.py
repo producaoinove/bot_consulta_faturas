@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     try:
         logging.info("Bot iniciado!")
-        res = main()
+        res = main(logging)
         if res == None:
             logging.error("Erro nao fatal, na execucao do bot!")
         else:

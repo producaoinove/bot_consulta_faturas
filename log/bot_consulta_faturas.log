@@ -14,3 +14,113 @@
 2024-07-26 16:47:39,276 - DEBUG - https://googlechromelabs.github.io:443 "GET /chrome-for-testing/latest-patch-versions-per-build.json HTTP/1.1" 200 6462
 2024-07-26 16:47:39,279 - INFO - Driver [C:\Users\Optiplex_3050\.wdm\drivers\chromedriver\win64\127.0.6533.72\chromedriver-win32/THIRD_PARTY_NOTICES.chromedriver] found in cache
 2024-07-26 16:47:39,280 - INFO - Deu erro no bot. Detalhes: Impossivel criar o navegador, detalhes: [WinError 193] %1 não é um aplicativo Win32 válido
+2024-08-01 13:49:56,272 - INFO - Bot iniciado!
+2024-08-01 13:49:56,545 - INFO - ====== WebDriver manager ======
+2024-08-01 13:49:58,710 - INFO - Get LATEST chromedriver version for google-chrome
+2024-08-01 13:49:58,717 - DEBUG - Starting new HTTPS connection (1): googlechromelabs.github.io:443
+2024-08-01 13:50:00,120 - DEBUG - https://googlechromelabs.github.io:443 "GET /chrome-for-testing/latest-patch-versions-per-build.json HTTP/1.1" 200 6553
+2024-08-01 13:50:00,144 - INFO - Get LATEST chromedriver version for google-chrome
+2024-08-01 13:50:00,146 - DEBUG - Starting new HTTPS connection (1): googlechromelabs.github.io:443
+2024-08-01 13:50:01,062 - DEBUG - https://googlechromelabs.github.io:443 "GET /chrome-for-testing/latest-patch-versions-per-build.json HTTP/1.1" 200 6553
+2024-08-01 13:50:01,065 - INFO - There is no [win64] chromedriver "127.0.6533.88" for browser google-chrome "127.0.6533" in cache
+2024-08-01 13:50:01,066 - INFO - Get LATEST chromedriver version for google-chrome
+2024-08-01 13:50:01,067 - DEBUG - Starting new HTTPS connection (1): googlechromelabs.github.io:443
+2024-08-01 13:50:01,894 - DEBUG - https://googlechromelabs.github.io:443 "GET /chrome-for-testing/latest-patch-versions-per-build.json HTTP/1.1" 200 6553
+2024-08-01 13:50:01,898 - DEBUG - Starting new HTTPS connection (1): googlechromelabs.github.io:443
+2024-08-01 13:50:02,628 - DEBUG - https://googlechromelabs.github.io:443 "GET /chrome-for-testing/known-good-versions-with-downloads.json HTTP/1.1" 200 50891
+2024-08-01 13:50:02,798 - INFO - WebDriver version 127.0.6533.88 selected
+2024-08-01 13:50:02,802 - INFO - Modern chrome version https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.88/win32/chromedriver-win32.zip
+2024-08-01 13:50:02,802 - INFO - About to download new driver from https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.88/win32/chromedriver-win32.zip
+2024-08-01 13:50:02,803 - DEBUG - Starting new HTTPS connection (1): storage.googleapis.com:443
+2024-08-01 13:50:03,612 - DEBUG - https://storage.googleapis.com:443 "GET /chrome-for-testing-public/127.0.6533.88/win32/chromedriver-win32.zip HTTP/1.1" 200 7733687
+2024-08-01 13:50:03,613 - INFO - Driver downloading response is 200
+2024-08-01 13:50:04,293 - INFO - Get LATEST chromedriver version for google-chrome
+2024-08-01 13:50:04,295 - DEBUG - Starting new HTTPS connection (1): googlechromelabs.github.io:443
+2024-08-01 13:50:05,076 - DEBUG - https://googlechromelabs.github.io:443 "GET /chrome-for-testing/latest-patch-versions-per-build.json HTTP/1.1" 200 6553
+2024-08-01 13:50:05,251 - INFO - Driver has been saved in cache [C:\Users\ProDesk_600_G3\.wdm\drivers\chromedriver\win64\127.0.6533.88]
+2024-08-01 13:50:05,291 - INFO - Deu erro no bot. Detalhes: Impossivel criar o navegador, detalhes: [WinError 193] %1 não é um aplicativo Win32 válido
+2024-08-01 13:53:48,590 - INFO - Bot iniciado!
+2024-08-01 13:53:48,694 - INFO - ====== WebDriver manager ======
+2024-08-01 13:53:50,057 - INFO - Get LATEST chromedriver version for google-chrome
+2024-08-01 13:53:50,062 - DEBUG - Starting new HTTPS connection (1): googlechromelabs.github.io:443
+2024-08-01 13:53:50,894 - DEBUG - https://googlechromelabs.github.io:443 "GET /chrome-for-testing/latest-patch-versions-per-build.json HTTP/1.1" 200 6553
+2024-08-01 13:53:50,920 - INFO - Get LATEST chromedriver version for google-chrome
+2024-08-01 13:53:50,922 - DEBUG - Starting new HTTPS connection (1): googlechromelabs.github.io:443
+2024-08-01 13:53:51,963 - DEBUG - https://googlechromelabs.github.io:443 "GET /chrome-for-testing/latest-patch-versions-per-build.json HTTP/1.1" 200 6553
+2024-08-01 13:53:51,967 - INFO - Driver [C:\Users\ProDesk_600_G3\.wdm\drivers\chromedriver\win64\127.0.6533.88\chromedriver-win32/THIRD_PARTY_NOTICES.chromedriver] found in cache
+2024-08-01 13:53:51,968 - DEBUG - Skipping Selenium Manager; path to chrome driver specified in Service class: C:\Users\ProDesk_600_G3\.wdm\drivers\chromedriver\win64\127.0.6533.88\chromedriver-win32/THIRD_PARTY_NOTICES.chromedriver
+2024-08-01 13:53:51,969 - INFO - Deu erro no bot. Detalhes: Impossivel criar o navegador, detalhes: [WinError 193] %1 não é um aplicativo Win32 válido
+2024-08-01 14:10:43,548 - INFO - Bot iniciado!
+2024-08-01 14:10:43,550 - DEBUG - Selenium Manager binary found at: C:\Users\ProDesk_600_G3\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe
+2024-08-01 14:10:43,551 - DEBUG - Executing process: C:\Users\ProDesk_600_G3\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe --browser chrome --debug --language-binding python --output json
+2024-08-01 14:10:46,841 - DEBUG - Sending stats to Plausible: Props { browser: "chrome", browser_version: "", os: "windows", arch: "amd64", lang: "python", selenium_version: "4.23" }
+2024-08-01 14:10:46,841 - DEBUG - chromedriver not found in PATH
+2024-08-01 14:10:46,841 - DEBUG - chrome detected at C:\Program Files\Google\Chrome\Application\chrome.exe
+2024-08-01 14:10:46,841 - DEBUG - Running command: wmic datafile where name='C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' get Version /value
+2024-08-01 14:10:46,841 - DEBUG - Output: "\r\r\n\r\r\nVersion=127.0.6533.88\r\r\n\r\r\n\r\r\n\r"
+2024-08-01 14:10:46,841 - DEBUG - Detected browser: chrome 127.0.6533.88
+2024-08-01 14:10:46,842 - DEBUG - Discovering versions from https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json
+2024-08-01 14:10:46,842 - DEBUG - Required driver: chromedriver 127.0.6533.88
+2024-08-01 14:10:46,842 - DEBUG - Downloading chromedriver 127.0.6533.88 from https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.88/win64/chromedriver-win64.zip
+2024-08-01 14:10:46,842 - DEBUG - Driver path: C:\Users\ProDesk_600_G3\.cache\selenium\chromedriver\win64\127.0.6533.88\chromedriver.exe
+2024-08-01 14:10:46,842 - DEBUG - Browser path: C:\Program Files\Google\Chrome\Application\chrome.exe
+2024-08-01 14:10:47,013 - DEBUG - Started executable: `C:\Users\ProDesk_600_G3\.cache\selenium\chromedriver\win64\127.0.6533.88\chromedriver.exe` in a child process with pid: 14160 using 0 to output -3
+2024-08-01 14:10:47,535 - DEBUG - POST http://localhost:51331/session {'capabilities': {'firstMatch': [{}], 'alwaysMatch': {'browserName': 'chrome', 'pageLoadStrategy': <PageLoadStrategy.normal: 'normal'>, 'browserVersion': None, 'goog:chromeOptions': {'extensions': [], 'binary': 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', 'args': ['--disable-gpu', '--no-sandbox']}}}}
+2024-08-01 14:10:47,536 - DEBUG - Starting new HTTP connection (1): localhost:51331
+2024-08-01 14:10:50,807 - DEBUG - http://localhost:51331 "POST /session HTTP/1.1" 200 0
+2024-08-01 14:10:50,807 - DEBUG - Remote response: status=200 | data={"value":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"127.0.6533.88","chrome":{"chromedriverVersion":"127.0.6533.88 (a2d0cb026721e4644e489b8ebb07038ca4e4351c-refs/branch-heads/6533@{#1846})","userDataDir":"C:\\Users\\PRODES~1\\AppData\\Local\\Temp\\scoped_dir14160_1985545617"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:51337"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"windows","proxy":{},"setWindowRect":true,"strictFileInteractability":false,"timeouts":{"implicit":0,"pageLoad":300000,"script":30000},"unhandledPromptBehavior":"dismiss and notify","webauthn:extension:credBlob":true,"webauthn:extension:largeBlob":true,"webauthn:extension:minPinLength":true,"webauthn:extension:prf":true,"webauthn:virtualAuthenticators":true},"sessionId":"76678e7407f1673d94424f6e99a1c5d6"}} | headers=HTTPHeaderDict({'Content-Length': '885', 'Content-Type': 'application/json; charset=utf-8', 'cache-control': 'no-cache'})
+2024-08-01 14:10:50,808 - DEBUG - Finished Request
+2024-08-01 14:10:50,808 - DEBUG - POST http://localhost:51331/session/76678e7407f1673d94424f6e99a1c5d6/url {'url': 'https://oi360.oi.net.br/prweb/PRServletCustom/AX6P2laLe91D09R0jTjfNJdv0u0s3qcA*/!STANDARD?pyActivity...'}
+2024-08-01 14:10:51,979 - DEBUG - http://localhost:51331 "POST /session/76678e7407f1673d94424f6e99a1c5d6/url HTTP/1.1" 200 0
+2024-08-01 14:10:51,979 - DEBUG - Remote response: status=200 | data={"value":null} | headers=HTTPHeaderDict({'Content-Length': '14', 'Content-Type': 'application/json; charset=utf-8', 'cache-control': 'no-cache'})
+2024-08-01 14:10:51,980 - DEBUG - Finished Request
+2024-08-01 15:18:44,020 - INFO - Bot iniciado!
+2024-08-01 15:18:44,023 - DEBUG - Selenium Manager binary found at: C:\Users\ProDesk_600_G3\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe
+2024-08-01 15:18:44,023 - DEBUG - Executing process: C:\Users\ProDesk_600_G3\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe --browser chrome --debug --language-binding python --output json
+2024-08-01 15:18:45,659 - DEBUG - Sending stats to Plausible: Props { browser: "chrome", browser_version: "", os: "windows", arch: "amd64", lang: "python", selenium_version: "4.23" }
+2024-08-01 15:18:45,660 - DEBUG - chromedriver not found in PATH
+2024-08-01 15:18:45,660 - DEBUG - chrome detected at C:\Program Files\Google\Chrome\Application\chrome.exe
+2024-08-01 15:18:45,660 - DEBUG - Running command: wmic datafile where name='C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' get Version /value
+2024-08-01 15:18:45,660 - DEBUG - Output: "\r\r\n\r\r\nVersion=127.0.6533.88\r\r\n\r\r\n\r\r\n\r"
+2024-08-01 15:18:45,660 - DEBUG - Detected browser: chrome 127.0.6533.88
+2024-08-01 15:18:45,660 - DEBUG - Discovering versions from https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json
+2024-08-01 15:18:45,661 - DEBUG - Required driver: chromedriver 127.0.6533.88
+2024-08-01 15:18:45,661 - DEBUG - chromedriver 127.0.6533.88 already in the cache
+2024-08-01 15:18:45,661 - DEBUG - Driver path: C:\Users\ProDesk_600_G3\.cache\selenium\chromedriver\win64\127.0.6533.88\chromedriver.exe
+2024-08-01 15:18:45,661 - DEBUG - Browser path: C:\Program Files\Google\Chrome\Application\chrome.exe
+2024-08-01 15:18:45,848 - DEBUG - Started executable: `C:\Users\ProDesk_600_G3\.cache\selenium\chromedriver\win64\127.0.6533.88\chromedriver.exe` in a child process with pid: 7200 using 0 to output -3
+2024-08-01 15:18:46,361 - DEBUG - POST http://localhost:52567/session {'capabilities': {'firstMatch': [{}], 'alwaysMatch': {'browserName': 'chrome', 'pageLoadStrategy': <PageLoadStrategy.normal: 'normal'>, 'browserVersion': None, 'goog:chromeOptions': {'extensions': [], 'binary': 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', 'args': ['--disable-gpu', '--no-sandbox']}}}}
+2024-08-01 15:18:46,362 - DEBUG - Starting new HTTP connection (1): localhost:52567
+2024-08-01 15:18:49,995 - DEBUG - http://localhost:52567 "POST /session HTTP/1.1" 200 0
+2024-08-01 15:18:49,995 - DEBUG - Remote response: status=200 | data={"value":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"127.0.6533.88","chrome":{"chromedriverVersion":"127.0.6533.88 (a2d0cb026721e4644e489b8ebb07038ca4e4351c-refs/branch-heads/6533@{#1846})","userDataDir":"C:\\Users\\PRODES~1\\AppData\\Local\\Temp\\scoped_dir7200_1919442386"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:52572"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"windows","proxy":{},"setWindowRect":true,"strictFileInteractability":false,"timeouts":{"implicit":0,"pageLoad":300000,"script":30000},"unhandledPromptBehavior":"dismiss and notify","webauthn:extension:credBlob":true,"webauthn:extension:largeBlob":true,"webauthn:extension:minPinLength":true,"webauthn:extension:prf":true,"webauthn:virtualAuthenticators":true},"sessionId":"ca6a963efe783850de2b92f41783e604"}} | headers=HTTPHeaderDict({'Content-Length': '884', 'Content-Type': 'application/json; charset=utf-8', 'cache-control': 'no-cache'})
+2024-08-01 15:18:49,995 - DEBUG - Finished Request
+2024-08-01 15:18:49,995 - DEBUG - POST http://localhost:52567/session/ca6a963efe783850de2b92f41783e604/url {'url': 'https://oi360.oi.net.br/prweb/PRServletCustom/AX6P2laLe91D09R0jTjfNJdv0u0s3qcA*/!STANDARD?pyActivity...'}
+2024-08-01 15:18:51,367 - DEBUG - http://localhost:52567 "POST /session/ca6a963efe783850de2b92f41783e604/url HTTP/1.1" 200 0
+2024-08-01 15:18:51,367 - DEBUG - Remote response: status=200 | data={"value":null} | headers=HTTPHeaderDict({'Content-Length': '14', 'Content-Type': 'application/json; charset=utf-8', 'cache-control': 'no-cache'})
+2024-08-01 15:18:51,367 - DEBUG - Finished Request
+2024-08-01 16:32:14,255 - INFO - Deu erro no bot. Detalhes: [Errno 2] No such file or directory: 'C:\\Users\\ProDesk_600_G3\\Documents\\bot_consultar_faturas\\bot_consulta_faturas\\fonts\\controle_qualidade.xlsx'
+2024-08-01 16:36:40,802 - INFO - Bot iniciado!
+2024-08-01 16:36:40,803 - DEBUG - Selenium Manager binary found at: C:\Users\ProDesk_600_G3\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe
+2024-08-01 16:36:40,803 - DEBUG - Executing process: C:\Users\ProDesk_600_G3\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe --browser chrome --debug --language-binding python --output json
+2024-08-01 16:36:41,878 - DEBUG - Sending stats to Plausible: Props { browser: "chrome", browser_version: "", os: "windows", arch: "amd64", lang: "python", selenium_version: "4.23" }
+2024-08-01 16:36:41,878 - DEBUG - chromedriver not found in PATH
+2024-08-01 16:36:41,878 - DEBUG - chrome detected at C:\Program Files\Google\Chrome\Application\chrome.exe
+2024-08-01 16:36:41,878 - DEBUG - Running command: wmic datafile where name='C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' get Version /value
+2024-08-01 16:36:41,879 - DEBUG - Output: "\r\r\n\r\r\nVersion=127.0.6533.88\r\r\n\r\r\n\r\r\n\r"
+2024-08-01 16:36:41,879 - DEBUG - Detected browser: chrome 127.0.6533.88
+2024-08-01 16:36:41,879 - DEBUG - Discovering versions from https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json
+2024-08-01 16:36:41,879 - DEBUG - Required driver: chromedriver 127.0.6533.88
+2024-08-01 16:36:41,879 - DEBUG - chromedriver 127.0.6533.88 already in the cache
+2024-08-01 16:36:41,879 - DEBUG - Driver path: C:\Users\ProDesk_600_G3\.cache\selenium\chromedriver\win64\127.0.6533.88\chromedriver.exe
+2024-08-01 16:36:41,879 - DEBUG - Browser path: C:\Program Files\Google\Chrome\Application\chrome.exe
+2024-08-01 16:36:41,955 - DEBUG - Started executable: `C:\Users\ProDesk_600_G3\.cache\selenium\chromedriver\win64\127.0.6533.88\chromedriver.exe` in a child process with pid: 900 using 0 to output -3
+2024-08-01 16:36:42,488 - DEBUG - POST http://localhost:55015/session {'capabilities': {'firstMatch': [{}], 'alwaysMatch': {'browserName': 'chrome', 'pageLoadStrategy': <PageLoadStrategy.normal: 'normal'>, 'browserVersion': None, 'goog:chromeOptions': {'extensions': [], 'binary': 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', 'args': ['--disable-gpu', '--no-sandbox']}}}}
+2024-08-01 16:36:42,489 - DEBUG - Starting new HTTP connection (1): localhost:55015
+2024-08-01 16:36:43,625 - DEBUG - http://localhost:55015 "POST /session HTTP/1.1" 200 0
+2024-08-01 16:36:43,625 - DEBUG - Remote response: status=200 | data={"value":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"127.0.6533.88","chrome":{"chromedriverVersion":"127.0.6533.88 (a2d0cb026721e4644e489b8ebb07038ca4e4351c-refs/branch-heads/6533@{#1846})","userDataDir":"C:\\Users\\PRODES~1\\AppData\\Local\\Temp\\scoped_dir900_2060708575"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:55021"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"windows","proxy":{},"setWindowRect":true,"strictFileInteractability":false,"timeouts":{"implicit":0,"pageLoad":300000,"script":30000},"unhandledPromptBehavior":"dismiss and notify","webauthn:extension:credBlob":true,"webauthn:extension:largeBlob":true,"webauthn:extension:minPinLength":true,"webauthn:extension:prf":true,"webauthn:virtualAuthenticators":true},"sessionId":"13913ee26f9a46c9fd9606ad82ca99e1"}} | headers=HTTPHeaderDict({'Content-Length': '883', 'Content-Type': 'application/json; charset=utf-8', 'cache-control': 'no-cache'})
+2024-08-01 16:36:43,626 - DEBUG - Finished Request
+2024-08-01 16:36:43,626 - DEBUG - POST http://localhost:55015/session/13913ee26f9a46c9fd9606ad82ca99e1/url {'url': 'https://oi360.oi.net.br/prweb/PRServletCustom/AX6P2laLe91D09R0jTjfNJdv0u0s3qcA*/!STANDARD?pyActivity...'}
+2024-08-01 16:36:44,809 - DEBUG - http://localhost:55015 "POST /session/13913ee26f9a46c9fd9606ad82ca99e1/url HTTP/1.1" 200 0
+2024-08-01 16:36:44,809 - DEBUG - Remote response: status=200 | data={"value":null} | headers=HTTPHeaderDict({'Content-Length': '14', 'Content-Type': 'application/json; charset=utf-8', 'cache-control': 'no-cache'})
+2024-08-01 16:36:44,809 - DEBUG - Finished Request
+2024-08-01 16:37:55,664 - INFO - Deu erro no bot. Detalhes: [Errno 2] No such file or directory: 'C:\\Users\\ProDesk_600_G3\\Documents\\bot_consultar_faturas\\bot_consulta_faturas\\fonts\\controle_qualidade.xlsx'
