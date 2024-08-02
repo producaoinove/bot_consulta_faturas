@@ -1,20 +1,20 @@
 import os
 import pandas as pd
 from selenium import webdriver
-from modules.navegador import iniciar_atendimento
 
 def coletar_informacoes(documento: str, tipo: str, browser : webdriver.Chrome, logging) -> tuple:
     """
-Recebe um documento (CNPJ ou CPF) e retorna os dados exigidos (VALOR; STATUS; DATA)
+    Recebe um documento (CNPJ ou CPF) e retorna os dados exigidos (VALOR; STATUS; DATA)
 
-Entrada:
-    documento (str): o documento que serão buscados
-    tipo_pessoa (str): se o cliente é CPF | MEI | NMEI
+    Entrada:
+        documento (str): o documento que serão buscados
+        tipo_pessoa (str): se o cliente é CPF | MEI | NMEI
 
-Saída:
-    Uma tupla com os três dados (VALOR, STATUS, DATA)
+    Saída:
+        Uma tupla com os três dados (VALOR, STATUS, DATA)
 
     """
+    from modules.navegador import iniciar_atendimento
 
     if 'CPF' in tipo.upper():
         tipo_p = "VAREJO"
@@ -22,12 +22,12 @@ Saída:
         status = atendimento[0]
         data = atendimento[1]
         valor = atendimento[2]
-        
+
         if status == None:
             status = "NOVO CLIENTE"
             valor = ""
             data = ""
-            
+
     elif 'MEI' in tipo.upper() or 'EMP' in tipo.upper():
         tipo_p = "EMPRESARIAL"
         atendimento = iniciar_atendimento(browser, documento, tipo_p, logging)
@@ -82,7 +82,6 @@ def main(logging):
     df = df[['DOC', 'VALOR', 'STATUS', 'DATA']]
     res =  exportar_controle_qualidade(df, arquivo_output)
     if res == "SUCESSO":
-
         total_buscados = len(df)
         total_validados = df['VALOR'].notna().sum()
         total_nao_validados = df['VALOR'].isna().sum()
