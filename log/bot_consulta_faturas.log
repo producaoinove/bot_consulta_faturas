@@ -149,3 +149,27 @@
 2024-08-02 16:22:51,308 - DEBUG - Remote response: status=200 | data={"value":null} | headers=HTTPHeaderDict({'Content-Length': '14', 'Content-Type': 'application/json; charset=utf-8', 'cache-control': 'no-cache'})
 2024-08-02 16:22:51,308 - DEBUG - Finished Request
 2024-08-02 17:21:19,949 - INFO - Deu erro no bot. Detalhes: [Errno 2] No such file or directory: 'C:\\Users\\ProDesk_600_G3\\Documents\\bot_consultar_faturas\\bot_consulta_faturas\\fonts\\controle_qualidade.xlsx'
+2024-08-05 14:24:24,333 - INFO - Bot iniciado!
+2024-08-05 14:24:24,336 - DEBUG - Selenium Manager binary found at: C:\Users\ProDesk_600_G3\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe
+2024-08-05 14:24:24,336 - DEBUG - Executing process: C:\Users\ProDesk_600_G3\AppData\Local\Programs\Python\Python312\Lib\site-packages\selenium\webdriver\common\windows\selenium-manager.exe --browser chrome --debug --language-binding python --output json
+2024-08-05 14:24:26,139 - DEBUG - Sending stats to Plausible: Props { browser: "chrome", browser_version: "", os: "windows", arch: "amd64", lang: "python", selenium_version: "4.23" }
+2024-08-05 14:24:26,139 - DEBUG - chromedriver not found in PATH
+2024-08-05 14:24:26,139 - DEBUG - chrome detected at C:\Program Files\Google\Chrome\Application\chrome.exe
+2024-08-05 14:24:26,140 - DEBUG - Running command: wmic datafile where name='C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' get Version /value
+2024-08-05 14:24:26,140 - DEBUG - Output: "\r\r\n\r\r\nVersion=127.0.6533.89\r\r\n\r\r\n\r\r\n\r"
+2024-08-05 14:24:26,140 - DEBUG - Detected browser: chrome 127.0.6533.89
+2024-08-05 14:24:26,140 - DEBUG - Discovering versions from https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json
+2024-08-05 14:24:26,140 - DEBUG - Required driver: chromedriver 127.0.6533.88
+2024-08-05 14:24:26,140 - DEBUG - chromedriver 127.0.6533.88 already in the cache
+2024-08-05 14:24:26,140 - DEBUG - Driver path: C:\Users\ProDesk_600_G3\.cache\selenium\chromedriver\win64\127.0.6533.88\chromedriver.exe
+2024-08-05 14:24:26,140 - DEBUG - Browser path: C:\Program Files\Google\Chrome\Application\chrome.exe
+2024-08-05 14:24:26,313 - DEBUG - Started executable: `C:\Users\ProDesk_600_G3\.cache\selenium\chromedriver\win64\127.0.6533.88\chromedriver.exe` in a child process with pid: 17368 using 0 to output -3
+2024-08-05 14:24:26,837 - DEBUG - POST http://localhost:54179/session {'capabilities': {'firstMatch': [{}], 'alwaysMatch': {'browserName': 'chrome', 'pageLoadStrategy': <PageLoadStrategy.normal: 'normal'>, 'browserVersion': None, 'goog:chromeOptions': {'extensions': [], 'binary': 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', 'args': ['--disable-gpu', '--no-sandbox']}}}}
+2024-08-05 14:24:26,838 - DEBUG - Starting new HTTP connection (1): localhost:54179
+2024-08-05 14:24:30,265 - DEBUG - http://localhost:54179 "POST /session HTTP/1.1" 200 0
+2024-08-05 14:24:30,265 - DEBUG - Remote response: status=200 | data={"value":{"capabilities":{"acceptInsecureCerts":false,"browserName":"chrome","browserVersion":"127.0.6533.89","chrome":{"chromedriverVersion":"127.0.6533.88 (a2d0cb026721e4644e489b8ebb07038ca4e4351c-refs/branch-heads/6533@{#1846})","userDataDir":"C:\\Users\\PRODES~1\\AppData\\Local\\Temp\\scoped_dir17368_1757784754"},"fedcm:accounts":true,"goog:chromeOptions":{"debuggerAddress":"localhost:54184"},"networkConnectionEnabled":false,"pageLoadStrategy":"normal","platformName":"windows","proxy":{},"setWindowRect":true,"strictFileInteractability":false,"timeouts":{"implicit":0,"pageLoad":300000,"script":30000},"unhandledPromptBehavior":"dismiss and notify","webauthn:extension:credBlob":true,"webauthn:extension:largeBlob":true,"webauthn:extension:minPinLength":true,"webauthn:extension:prf":true,"webauthn:virtualAuthenticators":true},"sessionId":"b89b89fbc0c6dfa188dd96e73d4db28c"}} | headers=HTTPHeaderDict({'Content-Length': '885', 'Content-Type': 'application/json; charset=utf-8', 'cache-control': 'no-cache'})
+2024-08-05 14:24:30,265 - DEBUG - Finished Request
+2024-08-05 14:24:30,266 - DEBUG - POST http://localhost:54179/session/b89b89fbc0c6dfa188dd96e73d4db28c/url {'url': 'https://oi360.oi.net.br/prweb/PRServletCustom/AX6P2laLe91D09R0jTjfNJdv0u0s3qcA*/!STANDARD?pyActivity...'}
+2024-08-05 14:24:31,419 - DEBUG - http://localhost:54179 "POST /session/b89b89fbc0c6dfa188dd96e73d4db28c/url HTTP/1.1" 200 0
+2024-08-05 14:24:31,419 - DEBUG - Remote response: status=200 | data={"value":null} | headers=HTTPHeaderDict({'Content-Length': '14', 'Content-Type': 'application/json; charset=utf-8', 'cache-control': 'no-cache'})
+2024-08-05 14:24:31,419 - DEBUG - Finished Request
