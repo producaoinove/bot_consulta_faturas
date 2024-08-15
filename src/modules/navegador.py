@@ -2,6 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By 
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.select import Select
+from selenium.webdriver.common.action_chains import ActionChains
+
 
 def criar_navegador() -> webdriver.Chrome:
     """
@@ -55,24 +58,26 @@ Saída:
     except Exception as e:
         raise Exception(f"Impossivel responder primeiro formulário, detalhes: {str(e)}")
 
-def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging):
+def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, actions: ActionChains):
     status = ""
+    browser.implicitly_wait(5)
+
     if tipo == 'EMPRESARIAL':
-        cnpj_input = WebDriverWait(browser, 3).until(
+        cnpj_input = WebDriverWait(browser, 5).until(
             EC.presence_of_element_located((By.ID, 'AuxiliarCOD_IDENT_PESSOA'))
         )
         cnpj_input.click()
         cnpj_input.send_keys(documento)
-        browser.implicitly_wait(1)
-        
-        cnpj_search_button = WebDriverWait(browser, 1).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="CT"]/div/div/div/div[1]/div/div/div/div[2]/span/button'))
-        )
-        cnpj_search_button.click()
         browser.implicitly_wait(3)
         
+        cnpj_search_button = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'Buscar')]"))
+        )
+        cnpj_search_button.click()
+        browser.implicitly_wait(10)
+        
         try:
-            product_button = WebDriverWait(browser, 2).until(
+            product_button = WebDriverWait(browser, 5).until(
                 EC.presence_of_element_located((By.ID, '//*[@id="CT"]/div/div/div'))
             )
             if product_button.is_displayed:
@@ -81,7 +86,7 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging):
         except:
             logging.error(f"Botão produto nao encontrado, seguindo fluxo da execucao")
         try:
-            new_client_div = WebDriverWait(browser, 2).until(
+            new_client_div = WebDriverWait(browser, 5).until(
                 EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'Novo Cliente')]"))
             )
             if new_client_div.is_displayed:
@@ -90,61 +95,62 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging):
         except:
             logging.error(f"Div Novo Cliente nao encontrada, seguindo fluxo da execucao")
             
-        next_button = WebDriverWait(browser, 3).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="CT"]/span/button'))
+        browser.implicitly_wait(3)
+        next_button = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'AVANÇAR')]"))
         )
         next_button.click()
-        browser.implicitly_wait(5)
+        browser.implicitly_wait(15)
         
-        services_div = WebDriverWait(browser, 3).until(
+        services_div = WebDriverWait(browser, 5).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div'))
         )
         services_div.click()
-        browser.implicitly_wait(2)
+        browser.implicitly_wait(10)
         
-        init_atend_button = WebDriverWait(browser, 3).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'INICIAR ATENDIMENTO')]"))
+        init_atend_button = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'INICIAR ATENDIMENTO')]"))
         )
         init_atend_button.click()
-        browser.implicitly_wait(5)
+        browser.implicitly_wait(10)
         
         # //*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/span/a
-        fatura_link = WebDriverWait(browser, 3).until(
-            EC.presence_of_element_located((By.XPATH, "//*[text()='Fatura e segunda via']"))
+        fatura_link = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//a[text()='Fatura e segunda via']"))
         )
         fatura_link.click()
-        browser.implicitly_wait(5)
+        browser.implicitly_wait(10)
         
         # Pegar as Informaçoes da div
         # status = "PAGA"
         # data = "01/07/2024"
         # valor = "R$ 1,00"
         
-        status = WebDriverWait(browser, 1).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div[1]/div/div/div/div[3]/div/div/div/div[1]/div/div/div/div'))
+        status = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//div[contains(text(), 'Pago') or contains(text(), 'Não Pago') or contains(text(), 'Vencido')]"))
         )
-        status = status.text
+        status = status[0].text
         browser.implicitly_wait(1)
         
-        data = WebDriverWait(browser, 1).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div[1]/div/div/div/div[1]/div/div/div/div[2]/div/div/div/div[2]/div/div/div/div[2]'))
+        data = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '/')]"))
         )
-        data = data.text
+        data = data[0].text
         browser.implicitly_wait(1)
         
-        valor = WebDriverWait(browser, 1).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div[1]/div/div/div/div[1]/div/div/div/div[2]/div/div/div/div[1]/div/div/div/div/div/span/span'))
+        valor = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '$')]"))
         )
-        valor = valor.text
+        valor = valor[0].text
         browser.implicitly_wait(3)
         
-        username = WebDriverWait(browser, 2).until(
+        username = WebDriverWait(browser, 5).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/div[2]/span/a'))
         )
         username.click()
         browser.implicitly_wait(3)
         
-        return_select_screen = WebDriverWait(browser, 3).until(
+        return_select_screen = WebDriverWait(browser, 5).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
         )
         return_select_screen.click()
@@ -154,96 +160,111 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging):
         return (status, data, valor, browser)
     
     if tipo == 'VAREJO':
-        seller_id = WebDriverWait(browser, 3).until(
+        seller_id = WebDriverWait(browser, 5).until(
             EC.presence_of_element_located((By.ID, 'NOME_OPERADOR'))
         )
         seller_id.click()
         seller_id.send_keys("TR791422")
+        browser.implicitly_wait(1)
         
-        seller_info = WebDriverWait(browser, 3).until(
-            EC.presence_of_element_located((By.ID, '//*[@id="po0"]'))
+        seller_info = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.CLASS_NAME, '//*[@class="oflowDivM"]'))
         )
-        seller_info.click()
-        browser.implicitly_wait(2)
+        actions.move_to_element(seller_info).click().perform()
+        # seller_info.click()
+        browser.implicitly_wait(5)
         
-        cnpj_input = WebDriverWait(browser, 3).until(
+        cnpj_input = WebDriverWait(browser, 5).until(
             EC.presence_of_element_located((By.ID, 'AuxiliarCOD_IDENT_PESSOA'))
         )
         cnpj_input.click()
         cnpj_input.send_keys(documento)
         browser.implicitly_wait(1)
         
-        cnpj_search_button = WebDriverWait(browser, 3).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="CT"]/button'))
+        cnpj_search_button = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'Buscar')]"))
         )
         cnpj_search_button.click()
         browser.implicitly_wait(5)
 
         try:
-            product_button = WebDriverWait(browser, 3).until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="CT"]/div/div/div'))
-            )
+            product_button = WebDriverWait(browser, 5).until(
+            	EC.presence_of_element_located((By.XPATH, '//*[@id="CT"]/div/div/div'))
+        	)
             if product_button.is_displayed:
                 product_button.click()
                 browser.implicitly_wait(5)
         except:
             logging.error(f"Botão produto nao encontrado, seguindo fluxo da execucao")
         try:
-            new_client_div = WebDriverWait(browser, 3).until(
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'Novo Cliente')]"))
-            )
+            new_client_div = WebDriverWait(browser, 5).until(
+            	EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'Novo Cliente')]"))
+        	)
             if new_client_div.is_displayed:
                 status = None
                 return (status, "", "", browser)
         except:
             logging.error(f"Div Novo Cliente nao encontrada, seguindo fluxo da execucao")
 
-        next_button = WebDriverWait(browser, 3).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="CT"]/span/button'))
+        next_button = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'AVANÇAR')]"))
         )
         next_button.click()
         browser.implicitly_wait(5)
 
-        services_div = WebDriverWait(browser, 3).until(
+        services_div = WebDriverWait(browser, 5).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div'))
         )
         services_div.click()
         browser.implicitly_wait(2)
         
-        init_atend_button = WebDriverWait(browser, 3).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'INICIAR ATENDIMENTO')]"))
+        init_atend_button = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'INICIAR ATENDIMENTO')]"))
         )
         init_atend_button.click()
         browser.implicitly_wait(5)
         
-        fatura_link = WebDriverWait(browser, 3).until(
-            EC.presence_of_element_located((By.XPATH, "//*[text()='Fatura e segunda via']"))
+        fatura_link = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'Fatura e segunda via')]"))
         )
         fatura_link.click()
         browser.implicitly_wait(5)
-        
-        status = WebDriverWait(browser, 1).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div[1]/div/div/div/div[3]/div/div/div/div[1]/div/div/div/div'))
-        )
-        status = status.text
-        browser.implicitly_wait(1)
-        
-        data = WebDriverWait(browser, 1).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div[1]/div/div/div/div[1]/div/div/div/div[2]/div/div/div/div[2]/div/div/div/div[2]'))
-        )
-        data = data.text
-        browser.implicitly_wait(1)
-        
-        valor = WebDriverWait(browser, 1).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div[1]/div/div/div/div[1]/div/div/div/div[2]/div/div/div/div[1]/div/div/div/div/div/span/span'))
-        )
-        valor = valor.text
-        browser.implicitly_wait(1)
         
         # Pegar as Informaçoes da div
         # status = "PAGA"
         # data = "01/07/2024"
         # valor = "R$ 1,00"
+        
+        status = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//div[contains(text(), 'Pago') or contains(text(), 'Não Pago') or contains(text(), 'Vencido')]"))
+        )
+        status = status[0].text
+        browser.implicitly_wait(1)
+        
+        data = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '/')]"))
+        )
+        data = data[0].text
+        browser.implicitly_wait(1)
+        
+        valor = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '$')]"))
+        )
+        valor = valor[0].text
+        browser.implicitly_wait(3)
+        
+        username = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/div[2]/span/a'))
+        )
+        username.click()
+        browser.implicitly_wait(3)
+        
+        return_select_screen = WebDriverWait(browser, 5).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
+        )
+        return_select_screen.click()
+        browser.implicitly_wait(3)
+        
         
         return (status, data, valor, browser)
 
@@ -260,29 +281,33 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, lo
     Saída:
         tuple((VALOR, STATUS, DATA, BROWSER))
     """
-    access_type_select = WebDriverWait(browser, 3).until(
-        EC.presence_of_element_located((By.ID, 'AcessoSelecionado'))
-    )
-    access_type_select.click()
-
+    
+    
+    # access_type_select = WebDriverWait(browser, 5).until(
+    #     EC.presence_of_element_located((By.XPATH, '//*[@id="AcessoSelecionado"]'))
+    # )
+    access_type_select = Select(browser.find_element(By.XPATH, '//*[@id="AcessoSelecionado"]'))
+    emp_select = 'Oi360Empresarial'
+    var_select = 'Oi360Varejo'
+    
+    init_button = browser.find_element(By.XPATH, "//button[contains(text(), 'INICIAR')]")
+    
     if tipo == 'EMPRESARIAL':
-        emp_selected = access_type_select.find_element(By.XPATH, '//*[@id="AcessoSelecionado"]/option[3]')
-        emp_selected.click()
-        init_button = WebDriverWait(browser, 1).until(
-            EC.presence_of_element_located((By.ID, 'PegaOnlyOnce'))
-        )
-        init_button.click()
+        access_type_select.select_by_visible_text(emp_select)
         browser.implicitly_wait(5)
-        result = search_doc(browser, documento, tipo, logging)
+        actions = ActionChains(browser)
+        actions.move_to_element(init_button).click().perform()
+        browser.implicitly_wait(1)
+        browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
+        result = search_doc(browser, documento, tipo, logging, actions)
         
     if tipo == 'VAREJO':
-        var_selected = access_type_select.find_element(By.XPATH, '//*[@id="AcessoSelecionado"]/option[2]')
-        var_selected.click()
-        init_button = WebDriverWait(browser, 1).until(
-            EC.presence_of_element_located((By.ID, 'PegaOnlyOnce'))
-        )
-        init_button.click()
+        access_type_select.select_by_visible_text(var_select)
         browser.implicitly_wait(5)
-        result = search_doc(browser, documento, tipo, logging)
-        
+        actions = ActionChains(browser)
+        actions.move_to_element(init_button).click().perform()
+        browser.implicitly_wait(1)
+        browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
+        result = search_doc(browser, documento, tipo, logging, actions)
+
     return result
