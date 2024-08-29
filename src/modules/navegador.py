@@ -203,6 +203,7 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
             # seller_id.send_keys(Keys.RETURN) comentado pra teste
         
         browser.implicitly_wait(15)
+        time.sleep(3)
         seller_options = browser.find_elements(By.XPATH, "//*[@node_name='PerformanceNovoAtendimentoBuscaCliente']")
         seller_opt = seller_options[1]
         print(seller_opt)
