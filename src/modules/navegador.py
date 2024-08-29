@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+import time
 
 def criar_navegador() -> webdriver.Chrome:
     """
@@ -150,27 +151,24 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
         # data = "01/07/2024"
         # valor = "R$ 1,00"
         
-        status = WebDriverWait(browser, 5).until(
-            EC.presence_of_element_located((By.XPATH, "//div[contains(text(), 'Pago') or contains(text(), 'Não Pago') or contains(text(), 'Vencido')]"))
-        )
+        status = browser.find_elements(By.XPATH, "//div[contains(text(), 'Pago') or contains(text(), 'Não Pago') or contains(text(), 'Vencido')]")
+        
         status = status[0].text
         browser.implicitly_wait(1)
         
-        data = WebDriverWait(browser, 5).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '/')]"))
-        )
+        data = browser.find_elements(By.XPATH, "//*[contains(text(), '/')]")
+        
         data = data[0].text
         browser.implicitly_wait(1)
         
-        valor = WebDriverWait(browser, 5).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '$')]"))
-        )
+        valor = browser.find_elements(By.XPATH, "//*[contains(text(), '$')]")
+        
         valor = valor[0].text
         browser.implicitly_wait(3)
         
         username = WebDriverWait(browser, 5).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/div[2]/span/a'))
-        )
+        )        
         username.click()
         browser.implicitly_wait(3)
 
@@ -188,51 +186,65 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
         return (status, data, valor, browser)
     
     if tipo == 'VAREJO':
+        browser.implicitly_wait(15)
         
-        seller_id = WebDriverWait(browser, 5).until(
+        seller_id = WebDriverWait(browser, 15).until(
             EC.presence_of_element_located((By.ID, 'NOME_OPERADOR'))
         )
-        seller_id.send_keys(tr)
+        # browser.execute_script(f"arguments[0].value = '{tr}';", seller_id)
         browser.implicitly_wait(15)
-        actions.key_down(Keys.TAB)
+        if seller_id.is_displayed:
+            seller_id.send_keys(tr)
+            # seller_id.send_keys(Keys.RETURN) comentado pra teste
+
+        else:
+            browser.implicitly_wait(15)
+            seller_id.send_keys(tr)
+            # seller_id.send_keys(Keys.RETURN) comentado pra teste
+        
         browser.implicitly_wait(15)
-        # seller_info = WebDriverWait(browser, 5).until(
-        #     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'LUIZ EDUARDO PONTES ESQUIVEL')]"))
-        # )
-
-        # if seller_info.is_displayed():
-        #     actions.move_to_element(seller_info).click().perform()
-        #     browser.implicitly_wait(5)
-
-        # try:
-        #     browser.execute_script("document.activeElement.blur();")
-        # except:
-        #     print("Erro ao tentar desfocar elemento")
-        #     body = browser.find_element(By.TAG_NAME, "body")
-        #     actions.move_to_element(body).click().perform()
-
-        # seller_info.click()
+        seller_options = browser.find_elements(By.XPATH, "//*[@node_name='PerformanceNovoAtendimentoBuscaCliente']")
+        seller_opt = seller_options[1]
+        print(seller_opt)
+        try:
+            actions.move_to_element(seller_opt).click().perform()
+        except:
+            seller_opt.click()
         
-        # body = browser.find_element(By.TAG_NAME, "body")
-        # actions.move_to_element(body).click().perform()
-        # browser.implicitly_wait(5)
-        # actions.reset_actions()
-        
-        
+        browser.implicitly_wait(15)
+
         cnpj_input = WebDriverWait(browser, 5).until(
             EC.presence_of_element_located((By.ID, 'AuxiliarCOD_IDENT_PESSOA'))
         )
-        # browser.execute_script("arguments[0].value = arguments[1];", cnpj_input, documento)
         # actions.send_keys_to_element(cnpj_input, documento)
         cnpj_input.send_keys(documento)
-
-        print(cnpj_input.get_attribute('value'))
-        browser.implicitly_wait(1)
+        try:
+            print(cnpj_input.get_attribute('value'))
+        except Exception as e:
+            print(e)
+            
+        browser.implicitly_wait(15)
 
         cnpj_search_button = WebDriverWait(browser, 5).until(
             EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'Buscar')]"))
         ) # VER SE TEM ALGUMA FUNÇAO PRA RODAR NO JS
         
+        # <button name="PerformanceNovoAtendimentoBuscaCliente_pyDisplayHarness_12" 
+        # data-ctl="Button" type="button" 
+        # data-click="[[&quot;runActivity&quot;, 
+        #               [&quot;ValidaCPFTerminal&quot;, &quot;CPF=&amp;UF=&amp;IDTerminal=&quot;,
+        #                &quot;pyDisplayHarness&quot;, &quot;:event&quot;, &quot;&quot;]]
+        #                ,[&quot;runActivity&quot;, 
+        #                [&quot;ChamadaProjetoPermissaoEspecial&quot;, &quot;&quot;, &quot;pyDisplayHarness&quot;, 
+        # &quot;:event&quot;, &quot;&quot;]],[&quot;refresh&quot;, 
+        # [&quot;otherSection&quot;,&quot;MainNovoAtendimento&quot;, 
+        # &quot;&quot;, &quot;&amp;=&quot;, 
+        # &quot;&quot;, &quot;,&quot;
+        # ,&quot;:event&quot;,&quot;&quot;,&quot;pyDisplayHarness&quot;]],
+        # [&quot;refresh&quot;, [&quot;otherSection&quot;,&quot;MainNovoAtendimento&quot;, 
+        # &quot;&quot;, &quot;&amp;=&quot;, &quot;&quot;, 
+        # &quot;DefinirAlertaPDVInvalido,&quot;,&quot;:event&quot;,&quot;1&quot;,&quot;pyDisplayHarness&quot;]]]
+        # " class="Simple pzhc pzbutton">Buscar</button>
         try:
             actions.move_to_element(cnpj_search_button).click().perform()
         except:
@@ -284,6 +296,8 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
         next_button = WebDriverWait(browser, 5).until(
             EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'AVANÇAR')]"))
         )
+        
+        # <button name="MainNovoAtendimento_pyDisplayHarness_61" data-ctl="Button" type="button" data-click="[[&quot;refresh&quot;, [&quot;thisSection&quot;,&quot;&quot;, &quot;&quot;, &quot;&amp;=&quot;, &quot;&quot;, &quot;ValidaDadosTelaNovoAtendimento,&quot;,&quot;:event&quot;,&quot;&quot;,&quot;pyDisplayHarness&quot;]],[&quot;runDataTransform&quot;, [&quot;DT_ConsultaVendedorTerceiros&quot;, &quot;UserIdentifier=#~OperatorIDVendedor.pyUserIdentifier~#&quot;, &quot;pyDisplayHarness&quot;,&quot;:event&quot;],[&quot;&amp;&quot;,[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendHabilitarAvancar&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]]]],[&quot;runDataTransform&quot;, [&quot;SetProdutoClienteFicticio&quot;, &quot;=&quot;, &quot;pyDisplayHarness&quot;,&quot;:event&quot;],[&quot;&amp;&quot;,[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendClienteNovo&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]],[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendHabilitarAvancar&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]]]],[&quot;setMobileTransition&quot;,[&quot;pega.mobile.transitions.NONE&quot;],[&quot;&amp;&quot;,[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendHabilitarAvancar&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]]]],[&quot;createNewWork&quot;,[&quot;Oi-Administration-MKTNBA-Work-ActionDriver&quot;,&quot;&quot;,&quot;StartActionDriver&quot;,&quot;&amp;ShowActionScript=&amp;ShowCustomerJourney=&amp;ShowCustomerPanel=&amp;ShowNBAGadget=&amp;CustomerId=#~pyDisplayHarness.Customer.Case_ID~#&quot;,&quot;&quot;,&quot;&quot;],[&quot;&amp;&quot;,[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendHabilitarAvancar&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]]]],[&quot;refresh&quot;, [&quot;thisSection&quot;,&quot;&quot;, &quot;&quot;, &quot;&amp;=&quot;, &quot;&quot;, &quot;DT_LimpaDadosEncerrarAtendimento,&quot;,&quot;:event&quot;,&quot;&quot;,&quot;pyDisplayHarness&quot;],[&quot;&amp;&quot;,[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendHabilitarAvancar&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]]]],[&quot;refresh&quot;, [&quot;otherSection&quot;,&quot;headerMenuOperador&quot;, &quot;&quot;, &quot;&amp;=&quot;, &quot;&quot;, &quot;,&quot;,&quot;:event&quot;,&quot;&quot;,&quot;pyDisplayHarness&quot;]]]" class="Strong pzhc pzbutton">AVANÇAR</button>
         next_button.click()
         browser.implicitly_wait(5)
 
@@ -311,23 +325,20 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
         # data = "01/07/2024"
         # valor = "R$ 1,00"
         
-        status = WebDriverWait(browser, 5).until(
-            EC.presence_of_element_located((By.XPATH, "//div[contains(text(), 'Pago') or contains(text(), 'Não Pago') or contains(text(), 'Vencido')]"))
-        )
+        status = browser.find_elements(By.XPATH, "//div[contains(text(), 'Pago') or contains(text(), 'Não Pago') or contains(text(), 'Vencido')]")
+        
         status = status[0].text
         print(status)
         browser.implicitly_wait(1)
         
-        data = WebDriverWait(browser, 5).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '/')]"))
-        )
+        data = browser.find_elements(By.XPATH, "//*[contains(text(), '/')]")
+        
         data = data[0].text
         print(data)
         browser.implicitly_wait(1)
         
-        valor = WebDriverWait(browser, 5).until(
-            EC.presence_of_element_located((By.XPATH, "//*[contains(text(), '$')]"))
-        )
+        valor = browser.find_elements(By.XPATH, "//*[contains(text(), '$')]")
+        
         valor = valor[0].text
         print(valor)
         browser.implicitly_wait(3)
