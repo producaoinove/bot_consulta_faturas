@@ -17,17 +17,19 @@ def coletar_informacoes(documento: str, tipo: str, browser : webdriver.Chrome, l
     from modules.navegador import iniciar_atendimento
 
     if 'CPF' in tipo.upper():
-        tipo_p = "VAREJO"
-        atendimento = iniciar_atendimento(browser, documento, tipo_p, logging)
-        status = atendimento[0]
-        data = atendimento[1]
-        valor = atendimento[2]
-
-        if status == None:
-            status = "NOVO CLIENTE"
-            valor = ""
-            data = ""
-
+        # tipo_p = "VAREJO"
+        # atendimento = iniciar_atendimento(browser, documento, tipo_p, logging)
+        # status = atendimento[0]
+        # data = atendimento[1]
+        # valor = atendimento[2]
+        print('Skip Varejo')
+        # if status == None:
+        #     status = "NOVO CLIENTE"
+        #     valor = ""
+        #     data = ""
+        status = "TESTE"
+        valor = "TESTE"
+        data = "TESTE"
     elif 'MEI' in tipo.upper() or 'EMP' in tipo.upper():
         tipo_p = "EMPRESARIAL"
         atendimento = iniciar_atendimento(browser, documento, tipo_p, logging)

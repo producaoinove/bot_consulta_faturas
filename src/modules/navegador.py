@@ -20,6 +20,7 @@ Realiza a criação do navegador
         # opcoes.add_argument("--headless=new")
         opcoes.add_argument('--disable-gpu')
         opcoes.add_argument('--no-sandbox')
+        opcoes.add_argument("window-size=1920,1080")
         browser = webdriver.Chrome(options=opcoes)
         return browser
     except Exception as e:
@@ -63,30 +64,45 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
     status = ""
     documento = str(documento)
     tr = "TR791422"
-    browser.implicitly_wait(5)
-
+    browser.implicitly_wait(30)
+    time.sleep(10)
+    print("Saiu da pausa")
     if tipo == 'EMPRESARIAL':
-        cnpj_input = WebDriverWait(browser, 5).until(
+        browser.implicitly_wait(15)
+
+        cnpj_input = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.ID, 'AuxiliarCOD_IDENT_PESSOA'))
         )
-        cnpj_input.send_keys(documento)
-        browser.implicitly_wait(3)
+        browser.implicitly_wait(15)
+        if cnpj_input.is_displayed:
+            cnpj_input.send_keys(documento)
+            data_change_value = cnpj_input.get_attribute('data-change')
+            browser.execute_script(data_change_value)
+            browser.implicitly_wait(15)
+        else:
+            browser.implicitly_wait(15)
+            cnpj_input.send_keys(documento)
+            data_change_value = cnpj_input.get_attribute('data-change')
+            browser.execute_script(data_change_value)
+            browser.implicitly_wait(15)
+            
+        browser.implicitly_wait(5)
         
-        cnpj_search_button = WebDriverWait(browser, 5).until(
+        # <button name="PerformanceNovoAtendimentoBuscaCliente_pyDisplayHarness_20" data-ctl="Button" type="button" data-click="[["runActivity", ["ValidaCPFTerminal", "CPF=&UF=&IDTerminal=", "pyDisplayHarness", ":event", ""]],["refresh", ["otherSection","MainNovoAtendimento", "", "&=", "", ",",":event","","pyDisplayHarness"]],["refresh", ["otherSection","MainNovoAtendimento", "", "&=", "", "DefinirAlertaPDVInvalido,",":event","1","pyDisplayHarness"]],["setValue", [["pyDisplayHarness.ErroPosse", "", ".ErroPosse", "pyWorkPage", "#~pyWorkPage.ErroPosse~#"]]],["processAction", ["ModalFalhaPosse","true",":event","","Rule-HTML-Section","","ModalTemplateAbaOiTotal","anim-bottom","anim-bottom","Data-Portal","Data-Portal","false","false"],["&",["OP",["$PpyDisplayHarness$pErroPosse","=","true","false"]]]]]" class="Simple pzhc pzbutton">Buscar</button>
+        cnpj_search_button = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'Buscar')]"))
-        ) # VER SE TEM ALGUMA FUNÇAO PRA RODAR NO JS
-        actions.move_to_element(cnpj_search_button).click().perform()
-        # cnpj_search_button.click()
-        
-        # cnpj_search_button = browser.find_element(By.NAME, 'PerformanceNovoAtendimentoBuscaCliente_pyDisplayHarness_12')
-        # data_click_value = button.get_attribute('data-click')
-        # driver.execute_script(data_click_value)
-        
-        
-        browser.implicitly_wait(10)
-        
+        )
         try:
-            product_button = WebDriverWait(browser, 5).until(
+            actions.move_to_element(cnpj_search_button).click().perform()
+        except:
+            cnpj_search_button = browser.find_element(By.NAME, 'PerformanceNovoAtendimentoBuscaCliente_pyDisplayHarness_12')
+            data_click_value = cnpj_search_button.get_attribute('data-click')
+            browser.execute_script(data_click_value)
+
+        browser.implicitly_wait(10)
+        time.sleep(5)
+        try:
+            product_button = WebDriverWait(browser, 20).until(
                 EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'1-1')]"))
             )
             if product_button.is_displayed:
@@ -96,51 +112,64 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
             logging.error(f"Botão produto nao encontrado, seguindo fluxo da execucao: {e}")
 
         try:
-            new_client_div = WebDriverWait(browser, 5).until(
+            new_client_div = WebDriverWait(browser, 20).until(
                 EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Novo Cliente')]"))
             )
             if new_client_div.is_displayed:
-                status = None
-                username = WebDriverWait(browser, 5).until(
-                    EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/div[2]/span/a'))
-                )
-                username.click()
-                browser.implicitly_wait(3)
+                print('Novo Cliente')
+                browser.execute_script("window.history.go(-2)")
+                time.sleep(5)
+                # status = None
+                # username = WebDriverWait(browser, 20).until(
+                #     EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'BRUNA EMILY LEMOS DE MATTOS')]"))
+                # )
+                # try:
+                #     username.click()
+                # except:
+                #     actions.move_to_element(username).click().perform()
+                # print('Foi pro nome')
+                # browser.implicitly_wait(3)
                 
-                try:
-                    return_select_screen = WebDriverWait(browser, 5).until(
-                        EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
-                    )
-                except:
-                    return_select_screen = username.find_element(By.XPATH, '//*[@id="ItemMiddle"]')
-                actions.move_to_element(return_select_screen).click().perform()
-                browser.execute_script("switchApplication('OiAuthentication')")
-                browser.implicitly_wait(3)
+                # try:
+                #     # return_select_screen = WebDriverWait(browser, 20).until(
+                #     #     EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
+                #     # )
+                #     return_select_screen = WebDriverWait(browser, 20).until(
+                #         EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Portal')]"))
+                #     )
+                # except:
+                #     # return_select_screen = username.find_element(By.XPATH, '//*[@id="ItemMiddle"]')
+                #     return_select_screen = username.find_element(By.XPATH, "//*[contains(text(), 'Portal')]")
+                    
+                # actions.move_to_element(return_select_screen).click().perform()
+                # browser.execute_script("switchApplication('OiAuthentication')")
+                # browser.implicitly_wait(3)
+                print('Retornando pro menu')
                 return (status, "", "", browser)
         except Exception as e:
             logging.error(f"Div Novo Cliente nao encontrada, seguindo fluxo da execucao {e}")
             
         browser.implicitly_wait(3)
-        next_button = WebDriverWait(browser, 5).until(
+        next_button = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'AVANÇAR')]"))
         )
         next_button.click()
-        browser.implicitly_wait(15)
+        browser.implicitly_wait(5)
         
-        services_div = WebDriverWait(browser, 5).until(
+        services_div = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div'))
         )
         services_div.click()
         browser.implicitly_wait(10)
         
-        init_atend_button = WebDriverWait(browser, 5).until(
+        init_atend_button = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'INICIAR ATENDIMENTO')]"))
         )
         init_atend_button.click()
         browser.implicitly_wait(10)
         
         # //*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/span/a
-        fatura_link = WebDriverWait(browser, 5).until(
+        fatura_link = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, "//a[text()='Fatura e segunda via']"))
         )
         fatura_link.click()
@@ -166,14 +195,14 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
         valor = valor[0].text
         browser.implicitly_wait(3)
         
-        username = WebDriverWait(browser, 5).until(
+        username = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/div[2]/span/a'))
         )        
         username.click()
         browser.implicitly_wait(3)
 
         try:
-            return_select_screen = WebDriverWait(browser, 5).until(
+            return_select_screen = WebDriverWait(browser, 20).until(
                 EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
             )
         except:
@@ -181,87 +210,47 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
         actions.move_to_element(return_select_screen).click().perform()
         browser.execute_script("switchApplication('OiAuthentication')")
         browser.implicitly_wait(3)
-        
-        
+
         return (status, data, valor, browser)
     
     if tipo == 'VAREJO':
         browser.implicitly_wait(15)
         
-        seller_id = WebDriverWait(browser, 15).until(
-            EC.presence_of_element_located((By.ID, 'NOME_OPERADOR'))
-        )
-        # browser.execute_script(f"arguments[0].value = '{tr}';", seller_id)
-        browser.implicitly_wait(15)
-        if seller_id.is_displayed:
-            seller_id.send_keys(tr)
-            # seller_id.send_keys(Keys.RETURN) comentado pra teste
-
-        else:
-            browser.implicitly_wait(15)
-            seller_id.send_keys(tr)
-            # seller_id.send_keys(Keys.RETURN) comentado pra teste
-        
-        browser.implicitly_wait(15)
-        time.sleep(3)
-        seller_options = browser.find_elements(By.XPATH, "//*[@node_name='PerformanceNovoAtendimentoBuscaCliente']")
-        seller_opt = seller_options[1]
-        print(seller_opt)
-        try:
-            actions.move_to_element(seller_opt).click().perform()
-        except:
-            seller_opt.click()
-        
-        browser.implicitly_wait(15)
-
-        cnpj_input = WebDriverWait(browser, 5).until(
+        cnpj_input = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.ID, 'AuxiliarCOD_IDENT_PESSOA'))
         )
         # actions.send_keys_to_element(cnpj_input, documento)
-        cnpj_input.send_keys(documento)
-        try:
-            print(cnpj_input.get_attribute('value'))
-        except Exception as e:
-            print(e)
+        browser.implicitly_wait(15)
+        if cnpj_input.is_displayed:
+            cnpj_input.send_keys(documento)
+            data_change_value = cnpj_input.get_attribute('data-change')
+            browser.execute_script(data_change_value)
+            browser.implicitly_wait(15)
+        else:
+            browser.implicitly_wait(15)
+            cnpj_input.send_keys(documento)
+            data_change_value = cnpj_input.get_attribute('data-change')
+            browser.execute_script(data_change_value)
+            browser.implicitly_wait(15)
             
         browser.implicitly_wait(15)
 
-        cnpj_search_button = WebDriverWait(browser, 5).until(
+        cnpj_search_button = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'Buscar')]"))
-        ) # VER SE TEM ALGUMA FUNÇAO PRA RODAR NO JS
-        
-        # <button name="PerformanceNovoAtendimentoBuscaCliente_pyDisplayHarness_12" 
-        # data-ctl="Button" type="button" 
-        # data-click="[[&quot;runActivity&quot;, 
-        #               [&quot;ValidaCPFTerminal&quot;, &quot;CPF=&amp;UF=&amp;IDTerminal=&quot;,
-        #                &quot;pyDisplayHarness&quot;, &quot;:event&quot;, &quot;&quot;]]
-        #                ,[&quot;runActivity&quot;, 
-        #                [&quot;ChamadaProjetoPermissaoEspecial&quot;, &quot;&quot;, &quot;pyDisplayHarness&quot;, 
-        # &quot;:event&quot;, &quot;&quot;]],[&quot;refresh&quot;, 
-        # [&quot;otherSection&quot;,&quot;MainNovoAtendimento&quot;, 
-        # &quot;&quot;, &quot;&amp;=&quot;, 
-        # &quot;&quot;, &quot;,&quot;
-        # ,&quot;:event&quot;,&quot;&quot;,&quot;pyDisplayHarness&quot;]],
-        # [&quot;refresh&quot;, [&quot;otherSection&quot;,&quot;MainNovoAtendimento&quot;, 
-        # &quot;&quot;, &quot;&amp;=&quot;, &quot;&quot;, 
-        # &quot;DefinirAlertaPDVInvalido,&quot;,&quot;:event&quot;,&quot;1&quot;,&quot;pyDisplayHarness&quot;]]]
-        # " class="Simple pzhc pzbutton">Buscar</button>
+        )
+
         try:
             actions.move_to_element(cnpj_search_button).click().perform()
         except:
             cnpj_search_button = browser.find_element(By.NAME, 'PerformanceNovoAtendimentoBuscaCliente_pyDisplayHarness_12')
             data_click_value = cnpj_search_button.get_attribute('data-click')
             browser.execute_script(data_click_value)
-            # cnpj_search_button.click()
 
-        # cnpj_search_button = browser.find_element(By.NAME, 'PerformanceNovoAtendimentoBuscaCliente_pyDisplayHarness_12')
-        # data_click_value = button.get_attribute('data-click')
-        # driver.execute_script(data_click_value)
-
+        time.sleep(5)
         browser.implicitly_wait(15)
 
         try:
-            product_button = WebDriverWait(browser, 5).until(
+            product_button = WebDriverWait(browser, 20).until(
                 EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'1-1')]"))
             )
             if product_button.is_displayed:
@@ -270,52 +259,64 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
         except:
             logging.error(f"Botão produto nao encontrado, seguindo fluxo da execucao")
         try:
-            new_client_div = WebDriverWait(browser, 5).until(
+            new_client_div = WebDriverWait(browser, 20).until(
                 EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Novo Cliente')]"))
             )
             if new_client_div.is_displayed:
-                status = None
-                username = WebDriverWait(browser, 5).until(
-                    EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/div[2]/span/a'))
-                )
-                username.click()
-                browser.implicitly_wait(3)
-                try:
-                    return_select_screen = WebDriverWait(browser, 5).until(
-                        EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
-                    )
-                except:
-                    return_select_screen = username.find_element(By.XPATH, '//*[@id="ItemMiddle"]')
-                actions.move_to_element(return_select_screen).click().perform()
-                browser.execute_script("switchApplication('OiAuthentication')")
-                browser.implicitly_wait(3)
+                print('Novo Cliente')
+                browser.execute_script("window.history.go(-1)")
+                time.sleep(5)
+                # status = None
+                # username = WebDriverWait(browser, 20).until(
+                #     EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'BRUNA EMILY LEMOS DE MATTOS')]"))
+                # )
+                # try:
+                #     username.click()
+                # except:
+                #     actions.move_to_element(username).click().perform()
+                # print('Foi pro nome')
+                # browser.implicitly_wait(3)
+                
+                # try:
+                #     # return_select_screen = WebDriverWait(browser, 20).until(
+                #     #     EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
+                #     # )
+                #     return_select_screen = WebDriverWait(browser, 20).until(
+                #         EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Portal')]"))
+                #     )
+                # except:
+                #     # return_select_screen = username.find_element(By.XPATH, '//*[@id="ItemMiddle"]')
+                #     return_select_screen = username.find_element(By.XPATH, "//*[contains(text(), 'Portal')]")
+                    
+                # actions.move_to_element(return_select_screen).click().perform()
+                # browser.execute_script("switchApplication('OiAuthentication')")
+                # browser.implicitly_wait(3)
                 
                 return (status, "", "", browser)
         except:
             logging.error(f"Div Novo Cliente nao encontrada, seguindo fluxo da execucao")
 
-        next_button = WebDriverWait(browser, 5).until(
+        next_button = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'AVANÇAR')]"))
         )
         
-        # <button name="MainNovoAtendimento_pyDisplayHarness_61" data-ctl="Button" type="button" data-click="[[&quot;refresh&quot;, [&quot;thisSection&quot;,&quot;&quot;, &quot;&quot;, &quot;&amp;=&quot;, &quot;&quot;, &quot;ValidaDadosTelaNovoAtendimento,&quot;,&quot;:event&quot;,&quot;&quot;,&quot;pyDisplayHarness&quot;]],[&quot;runDataTransform&quot;, [&quot;DT_ConsultaVendedorTerceiros&quot;, &quot;UserIdentifier=#~OperatorIDVendedor.pyUserIdentifier~#&quot;, &quot;pyDisplayHarness&quot;,&quot;:event&quot;],[&quot;&amp;&quot;,[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendHabilitarAvancar&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]]]],[&quot;runDataTransform&quot;, [&quot;SetProdutoClienteFicticio&quot;, &quot;=&quot;, &quot;pyDisplayHarness&quot;,&quot;:event&quot;],[&quot;&amp;&quot;,[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendClienteNovo&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]],[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendHabilitarAvancar&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]]]],[&quot;setMobileTransition&quot;,[&quot;pega.mobile.transitions.NONE&quot;],[&quot;&amp;&quot;,[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendHabilitarAvancar&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]]]],[&quot;createNewWork&quot;,[&quot;Oi-Administration-MKTNBA-Work-ActionDriver&quot;,&quot;&quot;,&quot;StartActionDriver&quot;,&quot;&amp;ShowActionScript=&amp;ShowCustomerJourney=&amp;ShowCustomerPanel=&amp;ShowNBAGadget=&amp;CustomerId=#~pyDisplayHarness.Customer.Case_ID~#&quot;,&quot;&quot;,&quot;&quot;],[&quot;&amp;&quot;,[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendHabilitarAvancar&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]]]],[&quot;refresh&quot;, [&quot;thisSection&quot;,&quot;&quot;, &quot;&quot;, &quot;&amp;=&quot;, &quot;&quot;, &quot;DT_LimpaDadosEncerrarAtendimento,&quot;,&quot;:event&quot;,&quot;&quot;,&quot;pyDisplayHarness&quot;],[&quot;&amp;&quot;,[&quot;OP&quot;,[&quot;$PpyDisplayHarness$pNovoAtendHabilitarAvancar&quot;,&quot;=&quot;,&quot;true&quot;,&quot;false&quot;]]]],[&quot;refresh&quot;, [&quot;otherSection&quot;,&quot;headerMenuOperador&quot;, &quot;&quot;, &quot;&amp;=&quot;, &quot;&quot;, &quot;,&quot;,&quot;:event&quot;,&quot;&quot;,&quot;pyDisplayHarness&quot;]]]" class="Strong pzhc pzbutton">AVANÇAR</button>
         next_button.click()
         browser.implicitly_wait(5)
 
-        services_div = WebDriverWait(browser, 5).until(
+        services_div = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div'))
         )
         actions.move_to_element(services_div).click().perform()
         # services_div.click()
         browser.implicitly_wait(2)
         
-        init_atend_button = WebDriverWait(browser, 5).until(
+        init_atend_button = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'INICIAR ATENDIMENTO')]"))
         )
         init_atend_button.click()
         browser.implicitly_wait(5)
         
-        fatura_link = WebDriverWait(browser, 5).until(
+        fatura_link = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'Fatura e segunda via')]"))
         )
         fatura_link.click()
@@ -344,13 +345,13 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
         print(valor)
         browser.implicitly_wait(3)
         
-        username = WebDriverWait(browser, 5).until(
+        username = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/div[2]/span/a'))
         )
         username.click()
         browser.implicitly_wait(3)
         try:
-            return_select_screen = WebDriverWait(browser, 5).until(
+            return_select_screen = WebDriverWait(browser, 20).until(
                 EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
             )
         except:
@@ -377,7 +378,7 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, lo
     """
     
     
-    # access_type_select = WebDriverWait(browser, 5).until(
+    # access_type_select = WebDriverWait(browser, 20).until(
     #     EC.presence_of_element_located((By.XPATH, '//*[@id="AcessoSelecionado"]'))
     # )
     access_type_select = Select(browser.find_element(By.XPATH, '//*[@id="AcessoSelecionado"]'))
@@ -393,6 +394,7 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, lo
         actions.move_to_element(init_button).click().perform()
         browser.implicitly_wait(1)
         browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
+        browser.implicitly_wait(5)
         result = search_doc(browser, documento, tipo, logging, actions)
         
     if tipo == 'VAREJO':
@@ -402,6 +404,6 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, lo
         actions.move_to_element(init_button).click().perform()
         browser.implicitly_wait(1)
         browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
+        browser.implicitly_wait(5)
         result = search_doc(browser, documento, tipo, logging, actions)
-
     return result
