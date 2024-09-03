@@ -37,4 +37,4 @@ if __name__ == "__main__":
 
         logging.info("Bot finalizado!")
     except Exception as e:
-        logging.info(f"Deu erro no bot. Detalhes: {str(e)}")
+        logging.error(f"Deu erro no bot. Detalhes: {str(e)}")

@@ -17,26 +17,34 @@ def coletar_informacoes(documento: str, tipo: str, browser : webdriver.Chrome, l
     from modules.navegador import iniciar_atendimento
 
     if 'CPF' in tipo.upper():
-        # tipo_p = "VAREJO"
-        # atendimento = iniciar_atendimento(browser, documento, tipo_p, logging)
-        # status = atendimento[0]
-        # data = atendimento[1]
-        # valor = atendimento[2]
-        print('Skip Varejo')
-        # if status == None:
-        #     status = "NOVO CLIENTE"
-        #     valor = ""
-        #     data = ""
-        status = "TESTE"
-        valor = "TESTE"
-        data = "TESTE"
+        tipo_p = "VAREJO"
+        atendimento = iniciar_atendimento(browser, documento, tipo_p, logging)
+        status = atendimento[0]
+        data = atendimento[1]
+        valor = atendimento[2]
+        # print('Skip Varejo')
+        if status == "Novo Cliente":
+            status = "NOVO CLIENTE"
+            valor = ""
+            data = ""
+        if status == "Nova Fibra":
+            status = "NOVO CLIENTE"
+            valor = ""
+            data = ""
+        # status = "TESTE"
+        # valor = "TESTE"
+        # data = "TESTE"
     elif 'MEI' in tipo.upper() or 'EMP' in tipo.upper():
         tipo_p = "EMPRESARIAL"
         atendimento = iniciar_atendimento(browser, documento, tipo_p, logging)
         status = atendimento[0]
         data = atendimento[1]
         valor = atendimento[2]
-        if status == None:
+        if status == "Novo Cliente":
+            status = "NOVO CLIENTE"
+            valor = ""
+            data = ""
+        if status == "Nova Fibra":
             status = "NOVO CLIENTE"
             valor = ""
             data = ""
@@ -63,21 +71,27 @@ def main(logging):
     setup_log('bot_consulta_faturas', path_log)
 
     browser = criar_navegador()
+    print("Navegador criado!")
+
     realizar_login(browser, 'https://oi360.oi.net.br/prweb/PRServletCustom/AX6P2laLe91D09R0jTjfNJdv0u0s3qcA*/!STANDARD?pyActivity=Data-Portal.ShowDesktop#!')
+    print("Login realizado!")
 
     arquivo_input = os.path.join(path_entrada, "controle_qualidade.xlsx")
     planilha_input = "Safras em Tratamento"
-
     arquivo_output = os.path.join(path_saida, "relatorio.csv")
 
     df = ler_controle_qualidade(arquivo_input, planilha_input)
     total_inicial = len(df)
     df = tratar_controle_qualidade(df)
     dados_extraidos = []
+    print("Arquivo xlsx lido e dados extraidos")
+
     for _, linhas in df.iterrows():
         doc = linhas['DOC']
         tipo_p = linhas['TIPO_CLIENTE']
+        print(doc, tipo_p)
         valor, status, data = coletar_informacoes(doc, tipo_p, browser, logging)
+        print(valor, status, data)
         dados_extraidos.append((valor, status, data))
         
     df[['VALOR', 'STATUS', 'DATA']] = pd.DataFrame(dados_extraidos, index=df.index)
