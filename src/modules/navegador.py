@@ -81,117 +81,6 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
             status = "Novo Cliente"
         elif info_cliente == "Nova Fibra":
             status = "Nova Fibra"
-
-        # try:
-        #     product_button = WebDriverWait(browser, 20).until(
-        #         EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'1-1')]"))
-        #     )
-        #     if product_button.is_displayed:
-        #         actions.move_to_element(product_button).click().perform()
-        #         browser.implicitly_wait(5)
-        # except Exception as e:
-        #     logging.error(f"Botão produto nao encontrado, seguindo fluxo da execucao: {e}")
-
-        # try:
-        #     new_client_div = WebDriverWait(browser, 20).until(
-        #         EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Novo Cliente')]"))
-        #     )
-        #     if new_client_div.is_displayed:
-        #         print('Novo Cliente')
-        #         browser.execute_script("window.history.go(-2)")
-        #         time.sleep(5)
-        #         # status = None
-        #         # username = WebDriverWait(browser, 20).until(
-        #         #     EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'BRUNA EMILY LEMOS DE MATTOS')]"))
-        #         # )
-        #         # try:
-        #         #     username.click()
-        #         # except:
-        #         #     actions.move_to_element(username).click().perform()
-        #         # print('Foi pro nome')
-        #         # browser.implicitly_wait(3)
-                
-        #         # try:
-        #         #     # return_select_screen = WebDriverWait(browser, 20).until(
-        #         #     #     EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
-        #         #     # )
-        #         #     return_select_screen = WebDriverWait(browser, 20).until(
-        #         #         EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Portal')]"))
-        #         #     )
-        #         # except:
-        #         #     # return_select_screen = username.find_element(By.XPATH, '//*[@id="ItemMiddle"]')
-        #         #     return_select_screen = username.find_element(By.XPATH, "//*[contains(text(), 'Portal')]")
-                    
-        #         # actions.move_to_element(return_select_screen).click().perform()
-        #         # browser.execute_script("switchApplication('OiAuthentication')")
-        #         # browser.implicitly_wait(3)
-        #         print('Retornando pro menu')
-        #         return (status, "", "", browser)
-        # except Exception as e:
-        #     logging.error(f"Div Novo Cliente nao encontrada, seguindo fluxo da execucao {e}")
-            
-        # browser.implicitly_wait(3)
-        # next_button = WebDriverWait(browser, 20).until(
-        #     EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'AVANÇAR')]"))
-        # )
-        # next_button.click()
-        # browser.implicitly_wait(5)
-        
-        # services_div = WebDriverWait(browser, 20).until(
-        #     EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div'))
-        # )
-        # services_div.click()
-        # browser.implicitly_wait(10)
-        
-        # init_atend_button = WebDriverWait(browser, 20).until(
-        #     EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'INICIAR ATENDIMENTO')]"))
-        # )
-        # init_atend_button.click()
-        # browser.implicitly_wait(10)
-        
-        # # //*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/span/a
-        # fatura_link = WebDriverWait(browser, 20).until(
-        #     EC.presence_of_element_located((By.XPATH, "//a[text()='Fatura e segunda via']"))
-        # )
-        # fatura_link.click()
-        # browser.implicitly_wait(10)
-        
-        # # Pegar as Informaçoes da div
-        # # status = "PAGA"
-        # # data = "01/07/2024"
-        # # valor = "R$ 1,00"
-        
-        # status = browser.find_elements(By.XPATH, "//div[contains(text(), 'Pago') or contains(text(), 'Não Pago') or contains(text(), 'Vencido')]")
-        
-        # status = status[0].text
-        # browser.implicitly_wait(1)
-        
-        # data = browser.find_elements(By.XPATH, "//*[contains(text(), '/')]")
-        
-        # data = data[0].text
-        # browser.implicitly_wait(1)
-        
-        # valor = browser.find_elements(By.XPATH, "//*[contains(text(), '$')]")
-        
-        # valor = valor[0].text
-        # browser.implicitly_wait(3)
-        
-        # username = WebDriverWait(browser, 20).until(
-        #     EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/div[2]/span/a'))
-        # )        
-        # username.click()
-        # browser.implicitly_wait(3)
-
-        # try:
-        #     return_select_screen = WebDriverWait(browser, 20).until(
-        #         EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
-        #     )
-        # except:
-        #     return_select_screen = username.find_element(By.XPATH, '//*[@id="ItemMiddle"]')
-        # actions.move_to_element(return_select_screen).click().perform()
-        # browser.execute_script("switchApplication('OiAuthentication')")
-        # browser.implicitly_wait(3)
-
         browser = retorna_selecao(browser)
 
         return (status, data, valor)
@@ -212,117 +101,9 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
             status = "Legado"
             browser = escolher_produto(browser)
             str(input("Pressione Enter apos selecionar produto...."))
-        # try:
-        #     product_button = WebDriverWait(browser, 20).until(
-        #         EC.presence_of_element_located((By.XPATH, "//*[contains(text(),'1-1')]"))
-        #     )
-        #     if product_button.is_displayed:
-        #         actions.move_to_element(product_button).click().perform()
-        #         browser.implicitly_wait(5)
-        # except:
-        #     logging.error(f"Botão produto nao encontrado, seguindo fluxo da execucao")
-        # try:
-        #     new_client_div = WebDriverWait(browser, 20).until(
-        #         EC.presence_of_element_located((By.XPATH, "//div[contains(text(),'Novo Cliente')]"))
-        #     )
-        #     if new_client_div.is_displayed:
-        #         print('Novo Cliente')
-        #         browser.execute_script("window.history.go(-1)")
-        #         time.sleep(5)
-        #         # status = None
-        #         # username = WebDriverWait(browser, 20).until(
-        #         #     EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'BRUNA EMILY LEMOS DE MATTOS')]"))
-        #         # )
-        #         # try:
-        #         #     username.click()
-        #         # except:
-        #         #     actions.move_to_element(username).click().perform()
-        #         # print('Foi pro nome')
-        #         # browser.implicitly_wait(3)
-                
-        #         # try:
-        #         #     # return_select_screen = WebDriverWait(browser, 20).until(
-        #         #     #     EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
-        #         #     # )
-        #         #     return_select_screen = WebDriverWait(browser, 20).until(
-        #         #         EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Portal')]"))
-        #         #     )
-        #         # except:
-        #         #     # return_select_screen = username.find_element(By.XPATH, '//*[@id="ItemMiddle"]')
-        #         #     return_select_screen = username.find_element(By.XPATH, "//*[contains(text(), 'Portal')]")
-                    
-        #         # actions.move_to_element(return_select_screen).click().perform()
-        #         # browser.execute_script("switchApplication('OiAuthentication')")
-        #         # browser.implicitly_wait(3)
-                
-        #         return (status, "", "", browser)
-        # except:
-        #     logging.error(f"Div Novo Cliente nao encontrada, seguindo fluxo da execucao")
+            browser = escolher_servico(browser)
+            str(input("Pressione Enter apos selecionar o serviço...."))
 
-        # next_button = WebDriverWait(browser, 20).until(
-        #     EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'AVANÇAR')]"))
-        # )
-        
-        # next_button.click()
-        # browser.implicitly_wait(5)
-
-        # services_div = WebDriverWait(browser, 20).until(
-        #     EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div'))
-        # )
-        # actions.move_to_element(services_div).click().perform()
-        # # services_div.click()
-        # browser.implicitly_wait(2)
-        
-        # init_atend_button = WebDriverWait(browser, 20).until(
-        #     EC.presence_of_element_located((By.XPATH, "//button[contains(text(),'INICIAR ATENDIMENTO')]"))
-        # )
-        # init_atend_button.click()
-        # browser.implicitly_wait(5)
-        
-        # fatura_link = WebDriverWait(browser, 20).until(
-        #     EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'Fatura e segunda via')]"))
-        # )
-        # fatura_link.click()
-        # browser.implicitly_wait(5)
-        
-        # # Pegar as Informaçoes da div
-        # # status = "PAGA"
-        # # data = "01/07/2024"
-        # # valor = "R$ 1,00"
-        
-        # status = browser.find_elements(By.XPATH, "//div[contains(text(), 'Pago') or contains(text(), 'Não Pago') or contains(text(), 'Vencido')]")
-        
-        # status = status[0].text
-        # print(status)
-        # browser.implicitly_wait(1)
-        
-        # data = browser.find_elements(By.XPATH, "//*[contains(text(), '/')]")
-        
-        # data = data[0].text
-        # print(data)
-        # browser.implicitly_wait(1)
-        
-        # valor = browser.find_elements(By.XPATH, "//*[contains(text(), '$')]")
-        
-        # valor = valor[0].text
-        # print(valor)
-        # browser.implicitly_wait(3)
-        
-        # username = WebDriverWait(browser, 20).until(
-        #     EC.presence_of_element_located((By.XPATH, '//*[@id="RULE_KEY"]/div/div/div/div/div/div/div/div/div[2]/span/a'))
-        # )
-        # username.click()
-        # browser.implicitly_wait(3)
-        # try:
-        #     return_select_screen = WebDriverWait(browser, 20).until(
-        #         EC.presence_of_element_located((By.XPATH, '//*[@id="ItemMiddle"]'))
-        #     )
-        # except:
-        #     return_select_screen = username.find_element(By.XPATH, '//*[@id="ItemMiddle"]')
-        # actions.move_to_element(return_select_screen).click().perform()
-        # browser.execute_script("switchApplication('OiAuthentication')")
-        # browser.implicitly_wait(3)
-        # browser.implicitly_wait(3)
         browser = retorna_selecao(browser)
         return (status, data, valor)
 
@@ -441,7 +222,7 @@ def escolher_produto(browser):
         
         if resultado == "Produto encontrado e clicado":
             avançar_button_selector = '''
-        var xpath = "//button[contains(text(), 'AVANÇAR')]";
+        var xpath = "//button[@name='MainNovoAtendimento_pyDisplayHarness_60']";
         var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
         var buttonElement = result.singleNodeValue;
         buttonElement.click();
@@ -458,6 +239,42 @@ def escolher_produto(browser):
 
     return browser
 
+def escolher_servico(browser : webdriver.Chrome):
+
+    try:
+        produto_selector = '''
+        var xpath = "/html/body/div[2]/form/div[3]/div/section/div/div/div/div/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr/td/div/table/tbody/tr[2]/td/div/div[2]/div/div/div/div/div/div/div/div/div[4]/div/div/div/div[2]/div/div/div/div/div[2]/div/div/div/div/div";
+        var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        var produtoElement = result.singleNodeValue;
+        produtoElement.click();
+        '''
+        browser.execute_script(produto_selector)
+        print('SERVIÇOS OI SELECIONADO')
+        avançar_button_selector = '''
+        var xpath = "//button[contains(text(), 'INICIAR ATENDIMENTO')]";
+        var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        var buttonElement = result.singleNodeValue;
+        buttonElement.click();
+            '''
+        browser.execute_script(avançar_button_selector)
+        print('INICIAR ATENDIMENTO SELECIONADO')
+
+        # print("produto selecionado e pagina avançada") Icoservico
+        time.sleep(5)
+        fatura_link = WebDriverWait(browser, 20).until(
+            EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'Fatura e segunda via')]"))
+        )
+        fatura_link.click()
+            
+    except Exception as e:
+        print(f"Erro: {e}")
+
+    return browser
+
+def get_fatura_infos(browser : webdriver.Chrome):
+    print('teste')
+    
+    
 def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, logging) :
     """
     Inicia a procura por documento no navegador
