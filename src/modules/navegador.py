@@ -86,6 +86,9 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
         browser = escolher_produto(browser, tipo)
         str(input("Pressione Enter apos selecionar produto...."))
 
+        browser = ir_segundavia(browser)
+        str(input("Pressione Enter apos ir para segunda via..."))
+
         browser = retorna_selecao(browser)
 
         return (status, data, valor)
@@ -472,14 +475,12 @@ if (produtoElement) {
                 elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_60')
                 data_click_value = elemento_avancar.get_attribute('data-click')
                 actions.move_to_element(elemento_avancar).click().perform()
-                print(data_click_value)
                 if data_click_value:
                     browser.execute_script(data_click_value)
             elif tipo == "EMPRESARIAL":
                 elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_82')
                 data_click_value = elemento_avancar.get_attribute('data-click')
                 actions.move_to_element(elemento_avancar).click().perform()
-                print(data_click_value)
                 if data_click_value:
                     browser.execute_script(data_click_value)
             else:
@@ -497,11 +498,15 @@ if (produtoElement) {
     return browser
 
 def ir_segundavia(browser : webdriver.Chrome):
+    print('Iniciado ir para fatura e segunda via')
+    actions = ActionChains(browser)
+    linkdafatura = browser.find_element(By.XPATH, "//a[text()='Fatura e segunda via']")
     fatura_link = WebDriverWait(browser, 20).until(
-        EC.presence_of_element_located((By.XPATH, "//a[text()='Fatura e segunda via']"))
+        EC.visibility_of_element_located((linkdafatura))
     )
-    fatura_link.click()
+    actions.move_to_element(linkdafatura).click().perform()
     browser.implicitly_wait(10)
+    print('Finalizado ir para fatura e segunda via')
     return browser
 
 def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, logging) :
