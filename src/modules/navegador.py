@@ -448,7 +448,7 @@ def resposta_varejo_busca(browser, documento, actions):
     info_cliente = cliente[1]
     return (browser, info_cliente)
 
-def escolher_produto(browser, tipo):
+def escolher_produto(browser : webdriver.Chrome, tipo):
 
     try:
         produto_selector = '''
@@ -465,18 +465,26 @@ if (produtoElement) {
         resultado = browser.execute_script(produto_selector)
         
         if resultado == "Produto encontrado e clicado":
+
+            actions = ActionChains(browser)
+
             if tipo == "VAREJO":
-                avancar_button_selector = '''
-document.querySelector('button[name="MainNovoAtendimento_pyDisplayHarness_60"]').click();
-                '''
+                elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_60')
+                data_click_value = elemento_avancar.get_attribute('data-click')
+                actions.move_to_element(elemento_avancar).click().perform()
+                print(data_click_value)
+                if data_click_value:
+                    browser.execute_script(data_click_value)
             elif tipo == "EMPRESARIAL":
-                avancar_button_selector = '''
-document.querySelector('button[name="MainNovoAtendimento_pyDisplayHarness_82"]').click();
-                '''
+                elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_82')
+                data_click_value = elemento_avancar.get_attribute('data-click')
+                actions.move_to_element(elemento_avancar).click().perform()
+                print(data_click_value)
+                if data_click_value:
+                    browser.execute_script(data_click_value)
             else:
                 raise Exception("Tipo invalido de cliente")
 
-            browser.execute_script(avancar_button_selector)
 
             print("produto selecionado e pagina avançada")
 
@@ -486,6 +494,14 @@ document.querySelector('button[name="MainNovoAtendimento_pyDisplayHarness_82"]')
     except Exception as e:
         print(f"Erro: {e}")
 
+    return browser
+
+def ir_segundavia(browser : webdriver.Chrome):
+    fatura_link = WebDriverWait(browser, 20).until(
+        EC.presence_of_element_located((By.XPATH, "//a[text()='Fatura e segunda via']"))
+    )
+    fatura_link.click()
+    browser.implicitly_wait(10)
     return browser
 
 def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, logging) :
