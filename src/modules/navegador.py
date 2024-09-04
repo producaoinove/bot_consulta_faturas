@@ -69,13 +69,13 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
     # browser.implicitly_wait(30)
     # time.sleep(10)
     # print("Saiu da pausa")
-    if tipo == 'EMPRESARIAL':
-        browser.implicitly_wait(15)
 
-        res = resposta_empresarial_busca(browser, documento, actions)
+    browser.implicitly_wait(15)
 
-        browser = res[0]
-        info_cliente = res[1]
+    res = resposta_empresarial_busca(browser, documento, actions)
+
+    browser = res[0]
+    info_cliente = res[1]
 
     if info_cliente == "Novo Cliente":
         status = "Novo Cliente"
@@ -86,30 +86,20 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
         browser = escolher_produto(browser, tipo)
         str(input("Pressione Enter apos selecionar produto...."))
 
-        browser = retorna_selecao(browser)
+        browser = escolher_servico(browser)
+        str(input("Pressione Enter apos escolher servico..."))
 
-        return (status, data, valor)
-    
-    if tipo == 'VAREJO':
-        browser.implicitly_wait(15)
-        
-        res = resposta_varejo_busca(browser, documento, actions)
+        browser = ir_segundavia(browser)
+        str(input("Pressione Enter apos ir para segunda via..."))
 
-        browser = res[0]
-        info_cliente = res[1]
-
-        if info_cliente == "Novo Cliente":
-            status = "Novo Cliente"
-        elif info_cliente == "Nova Fibra":
-            status = "Nova Fibra"
-        elif info_cliente == "Legado":
-            status = "Legado"
-            browser = escolher_produto(browser)
-            str(input("Pressione Enter apos selecionar produto...."))
-            browser = escolher_servico(browser)
-            str(input("Pressione Enter apos selecionar o serviço...."))
+        buscar = get_fatura_infos(browser)
+        browser = buscar[1]
+        data = buscar[0][1]
+        valor = buscar[0][1]
 
         browser = retorna_selecao(browser)
+        str(input("Pressione Enter apos retornar para selecao..."))
+
         return (status, data, valor)
 
 def retorna_selecao(browser):
@@ -209,19 +199,19 @@ def resposta_varejo_busca(browser, documento, actions):
     info_cliente = cliente[1]
     return (browser, info_cliente)
 
-def escolher_produto(browser):
+def escolher_produto(browser : webdriver.Chrome, tipo):
 
     try:
         produto_selector = '''
-        var xpath = "//span[text()='OITOTAL_FXBL']";
-        var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        var produtoElement = result.singleNodeValue;
-        if (produtoElement) {
-            produtoElement.click();
-            return "Produto encontrado e clicado";
-        } else {
-            return "Produto não encontrado";
-        }
+var xpath = "//span[text()='OITOTAL_FXBL']";
+var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+var produtoElement = result.singleNodeValue;
+if (produtoElement) {
+    produtoElement.click();
+    return "Produto encontrado e clicado";
+} else {
+    return "Produto não encontrado";
+}
         '''
         resultado = browser.execute_script(produto_selector)
         
@@ -233,14 +223,12 @@ def escolher_produto(browser):
                 elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_60')
                 data_click_value = elemento_avancar.get_attribute('data-click')
                 actions.move_to_element(elemento_avancar).click().perform()
-                print(data_click_value)
                 if data_click_value:
                     browser.execute_script(data_click_value)
             elif tipo == "EMPRESARIAL":
                 elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_82')
                 data_click_value = elemento_avancar.get_attribute('data-click')
                 actions.move_to_element(elemento_avancar).click().perform()
-                print(data_click_value)
                 if data_click_value:
                     browser.execute_script(data_click_value)
             else:
@@ -257,17 +245,47 @@ def escolher_produto(browser):
 
     return browser
 
-def ir_segundavia(browser : webdriver.Chrome):
-    fatura_link = WebDriverWait(browser, 20).until(
-        EC.presence_of_element_located((By.XPATH, "//a[text()='Fatura e segunda via']"))
-    )
-    fatura_link.click()
-    browser.implicitly_wait(10)
+def escolher_servico(browser : webdriver.Chrome):
+
+    try:
+        produto_selector = '''
+        var xpath = "/html/body/div[2]/form/div[3]/div/section/div/div/div/div/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr/td/div/table/tbody/tr[2]/td/div/div[2]/div/div/div/div/div/div/div/div/div[4]/div/div/div/div[2]/div/div/div/div/div[2]/div/div/div/div/div";
+        var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        var produtoElement = result.singleNodeValue;
+        produtoElement.click();
+        '''
+        browser.execute_script(produto_selector)
+        print('SERVIÇOS OI SELECIONADO')
+        avançar_button_selector = '''
+        var xpath = "//button[contains(text(), 'INICIAR ATENDIMENTO')]";
+        var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+        var buttonElement = result.singleNodeValue;
+        buttonElement.click();
+            '''
+        browser.execute_script(avançar_button_selector)
+        print('INICIAR ATENDIMENTO SELECIONADO')
+            
+    except Exception as e:
+        print(f"Erro: {e}")
+
     return browser
 
-def get_fatura_infos(browser : webdriver.Chrome):
-    print('teste')
-    
+def ir_segundavia(browser : webdriver.Chrome):
+    try:
+        fatura_link = WebDriverWait(browser, 20).until(
+            EC.presence_of_element_located((By.XPATH, "//a[text()='Fatura e segunda via']"))
+        )
+        fatura_link.click()
+        browser.implicitly_wait(10)
+    except Exception as e:
+        print(f"Falha na busca da segunda via, detalhes: {str(e)}")
+    return browser
+
+def get_fatura_infos(browser : webdriver.Chrome ):
+    valor = ''
+    data = ''
+    return ((valor, data), browser)
+
     
 def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, logging) :
     """
@@ -314,3 +332,4 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, lo
         str(input("Pressione enter apos selecionar varejo..."))
         result = search_doc(browser, documento, tipo, logging, actions)
     return result
+
