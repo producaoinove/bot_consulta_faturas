@@ -92,6 +92,7 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
 
         browser = ir_segundavia(browser)
         str(input("Pressione Enter apos ir para faturas e segunda via..."))
+        browser.switch_to.default_content()
 
         buscar = get_fatura_infos(browser)
         browser = buscar[1]
@@ -101,7 +102,6 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
 
         browser = ir_novoatendimento(browser)
         str(input("Pressione Enter apos retornar para novo atendimento..."))
-
         browser = retorna_selecao(browser)
         str(input("Pressione Enter apos retornar para selecao..."))
 
@@ -249,35 +249,28 @@ def escolher_servico(browser : webdriver.Chrome):
     try:
 
         try:
-            WebDriverWait(browser, 20).until(
-                EC.presence_of_element_located((By.XPATH, "//div[@base_ref='pyWorkPage.IntentList(2)']"))
+            # WebDriverWait(browser, 20).until(
+            #     EC.presence_of_element_located((By.XPATH, "//div[@base_ref='pyWorkPage.IntentList(2)']"))
+            # )
+            
+#             var xpath = "//*[@aria-label='Painel Central']";
+# var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+# var produtoElement = result.singleNodeValue;
+# if (produtoElement) {
+#     produtoElement.click();
+#     console.log("Produto encontrado e clicado");
+# } else {
+#     console.log("Produto não encontrado");
+# }
+            main_iframe = WebDriverWait(browser, 20).until(
+                EC.presence_of_element_located((By.ID, "PegaGadget0Ifr"))
             )
-
-            seletor_js = '''
-var parentElements = document.querySelectorAll('[base_ref="pyWorkPage.IntentList(2)"]');
-parentElements.forEach(function(parentElement) {
-    console.log('Verificando elemento pai:', parentElement);
-    setTimeout(function(el) {
-        console.log('Tentando clicar no elemento pai:', el);
-        var event = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
-        el.dispatchEvent(event);
-        console.log('Elemento pai clicado com sucesso.');
-    }, 1000, parentElement);
-    var childElements = parentElement.querySelectorAll('[data-click]');
-    console.log('Filhos com data-click:', childElements);
-    childElements.forEach(function(childElement) {
-        setTimeout(function(el) {
-            console.log('Tentando clicar no filho:', el);
-            var event = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
-            el.dispatchEvent(event);
-            console.log('Filho clicado com sucesso.');
-        }, 2000, childElement);
-    });
-});
-            '''
-
-            browser.execute_script(seletor_js)
-            print('Evento disparado com sucesso')
+            
+            browser.switch_to.frame(main_iframe)
+            service_btn = WebDriverWait(browser, 10).until(
+                EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'SERVIÇOS OI')]"))
+            )
+            service_btn.click()
 
         except Exception as e:
             print(f"Falha ao disparar evento, detalhes: {str(e)}")
@@ -298,6 +291,8 @@ var clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true, view
 element.dispatchEvent(clickEvent);
             '''
             browser.execute_script(avancar_js)
+            # browser.switch_to.default_content()
+
             print('INICIAR ATENDIMENTO SELECIONADO')
         except Exception as e:
             print(f"Falha ao iniciar atendimento, detalhes: {str(e)}")
@@ -312,11 +307,8 @@ def ir_segundavia(browser: webdriver.Chrome):
         fatura_link = WebDriverWait(browser, 10).until(
             EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Fatura e segunda via')]"))
         )
-        data_click_value = fatura_link.get_attribute('onclick')
         actions = ActionChains(browser)
         actions.move_to_element(fatura_link).click().perform()
-        if data_click_value:
-            browser.execute_script(data_click_value)
         browser.implicitly_wait(10)
         print("Clique realizado com sucesso!")
         
@@ -340,11 +332,16 @@ def ir_novoatendimento(browser: webdriver.Chrome):
 def get_fatura_infos(browser: webdriver.Chrome):
     try:
         time.sleep(5)
-
+        consult_iframe = WebDriverWait(browser, 20).until(
+            EC.presence_of_element_located((By.ID, "PegaGadget1Ifr"))
+        )
+            
+        browser.switch_to.frame(consult_iframe)
+        
         js_code = """
 let valores = Array.from(new Set(
     Array.from(document.querySelectorAll("span"))
-    .filter(span => span.textContent.includes("R") && span.textContent.includes(","))
+    .filter(span => span.textContent.includes("$"))
     .map(span => span.textContent)
 ));
 
@@ -360,8 +357,8 @@ let status = Array.from(document.querySelectorAll("div"))
                     div.textContent.toLowerCase().includes("vencido"))
     .slice(0, valores.length) 
     .map(div => {
-        const text = div.textContent.toLowerCase();
-        if (text.includes("pago")) {
+       const text = div.textContent.toLowerCase();
+        if (text.includes("pago") ) {
             return 'pago';
         } else {
             return 'em aberto';
@@ -372,6 +369,51 @@ return { valores, datas, status };
         """
 
         res = browser.execute_script(js_code)
+        
+        fatura_grid = WebDriverWait(browser, 20).until(
+            EC.presence_of_element_located((By.XPATH, "//*[@data-node-id='ConsultaDeFaturas']"))
+        )
+        
+        datas = fatura_grid.find_elements(By.XPATH, "//span[contains(text(), '/')]")
+        lista_datas = []
+        for i in datas:
+            valor = i.text
+            lista_datas.append(valor)
+        
+        lista_datas = lista_datas[3:]
+        res['datas'] = lista_datas
+        
+        valores = fatura_grid.find_elements(By.XPATH, "//*[contains(text(), '$')]")
+        
+        lista_valores = []
+        for i in valores:
+            valor = i.text
+            if valor != '':
+                lista_valores.append(valor)
+        
+        res['valores'] = lista_valores
+        
+        status = fatura_grid.find_elements(By.XPATH, "//*[contains(text(), 'Não Pago') or contains(text(), 'Pago') or contains(text(), 'Vencido')]")
+        lista_status = []
+        for i in status:
+            valor = i.text
+            if valor == 'Não Pago':
+                valor = 'em aberto'
+                lista_status.append(valor)
+            if valor == 'Pago':
+                valor = 'pago'
+                lista_status.append(valor)
+            if valor == 'Vencido':
+                valor = 'em aberto'
+                lista_status.append(valor)
+        
+        res['status'] = lista_status
+
+        # Implementar for usando o indice da lista de data
+
+        # if len(lista_datas) > len(lista_status):
+        #     if lista_status[0] == 'em aberto' and lista_status[1] == 'pago':
+        #         lista_datas.pop(lista_datas[0] + 2)
 
         print("Valores: ", res['valores'])
         print("Datas: ", res['datas'])
