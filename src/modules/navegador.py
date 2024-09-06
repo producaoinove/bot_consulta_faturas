@@ -70,9 +70,10 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
     # time.sleep(10)
     # print("Saiu da pausa")
 
+
     browser.implicitly_wait(15)
 
-    res = resposta_empresarial_busca(browser, documento, actions)
+    res = resposta_busca(browser, documento, actions, tipo)
 
     browser = res[0]
     info_cliente = res[1]
@@ -84,18 +85,22 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
     elif info_cliente == "Legado":
         status = "Legado"
         browser = escolher_produto(browser, tipo)
-        str(input("Pressione Enter apos selecionar produto...."))
+        str(input("Pressione Enter apos selecionar Produto e Avancar..."))
 
         browser = escolher_servico(browser)
-        str(input("Pressione Enter apos escolher servico..."))
+        str(input("Pressione Enter apos escolher Servicos Oi..."))
 
         browser = ir_segundavia(browser)
-        str(input("Pressione Enter apos ir para segunda via..."))
+        str(input("Pressione Enter apos ir para faturas e segunda via..."))
 
         buscar = get_fatura_infos(browser)
         browser = buscar[1]
-        data = buscar[0][1]
-        valor = buscar[0][1]
+        info_fatura = buscar[0]
+        print(documento, info_fatura)
+        str(input("Pressione Enter apos coletar dados do site..."))
+
+        browser = ir_novoatendimento(browser)
+        str(input("Pressione Enter apos retornar para novo atendimento..."))
 
         browser = retorna_selecao(browser)
         str(input("Pressione Enter apos retornar para selecao..."))
@@ -137,7 +142,7 @@ def buscar_cliente(browser, documento, actions, tipo_busca):
     try:
         actions.move_to_element(cnpj_search_button).click().perform()
     except:
-        cnpj_search_button = browser.find_element(By.NAME, f'PerformanceNovoAtendimentoBuscaCliente_pyDisplayHarness_{tipo_busca}')
+        cnpj_search_button = browser.find_element(By.NAME, f'SelecaoAplicacao_pyDisplayHarness_6')
         data_click_value = cnpj_search_button.get_attribute('data-click')
         if data_click_value:
             browser.execute_script(data_click_value)
@@ -185,15 +190,9 @@ return null;
 
     return (driver, 'Nova Fibra')
 
-def resposta_empresarial_busca(browser, documento, actions):
-    browser = buscar_cliente(browser, documento, actions, tipo_busca='20')
-    cliente = verificar_cliente(browser)
-    browser = cliente[0]
-    info_cliente = cliente[1]
-    return (browser, info_cliente)
-
-def resposta_varejo_busca(browser, documento, actions):
-    browser = buscar_cliente(browser, documento, actions, tipo_busca='12')
+def resposta_busca(browser, documento, actions, tipo_busca):
+    if tipo_busca == "VAREJO": browser = buscar_cliente(browser, documento, actions, tipo_busca='12')
+    else: browser = buscar_cliente(browser, documento, actions, tipo_busca='20')
     cliente = verificar_cliente(browser)
     browser = cliente[0]
     info_cliente = cliente[1]
@@ -248,45 +247,142 @@ if (produtoElement) {
 def escolher_servico(browser : webdriver.Chrome):
 
     try:
-        produto_selector = '''
-        var xpath = "/html/body/div[2]/form/div[3]/div/section/div/div/div/div/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr/td/div/table/tbody/tr[2]/td/div/div[2]/div/div/div/div/div/div/div/div/div[4]/div/div/div/div[2]/div/div/div/div/div[2]/div/div/div/div/div";
-        var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        var produtoElement = result.singleNodeValue;
-        produtoElement.click();
-        '''
-        browser.execute_script(produto_selector)
-        print('SERVIÇOS OI SELECIONADO')
-        avançar_button_selector = '''
-        var xpath = "//button[contains(text(), 'INICIAR ATENDIMENTO')]";
-        var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        var buttonElement = result.singleNodeValue;
-        buttonElement.click();
+
+        try:
+            WebDriverWait(browser, 20).until(
+                EC.presence_of_element_located((By.XPATH, "//div[@base_ref='pyWorkPage.IntentList(2)']"))
+            )
+
+            seletor_js = '''
+var parentElements = document.querySelectorAll('[base_ref="pyWorkPage.IntentList(2)"]');
+parentElements.forEach(function(parentElement) {
+    console.log('Verificando elemento pai:', parentElement);
+    setTimeout(function(el) {
+        console.log('Tentando clicar no elemento pai:', el);
+        var event = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+        el.dispatchEvent(event);
+        console.log('Elemento pai clicado com sucesso.');
+    }, 1000, parentElement);
+    var childElements = parentElement.querySelectorAll('[data-click]');
+    console.log('Filhos com data-click:', childElements);
+    childElements.forEach(function(childElement) {
+        setTimeout(function(el) {
+            console.log('Tentando clicar no filho:', el);
+            var event = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+            el.dispatchEvent(event);
+            console.log('Filho clicado com sucesso.');
+        }, 2000, childElement);
+    });
+});
             '''
-        browser.execute_script(avançar_button_selector)
-        print('INICIAR ATENDIMENTO SELECIONADO')
+
+            browser.execute_script(seletor_js)
+            print('Evento disparado com sucesso')
+
+        except Exception as e:
+            print(f"Falha ao disparar evento, detalhes: {str(e)}")
+
+        str(input("Pressione Enter apos selecionar Serviços Oi..."))
+
+        try:
+            # avançar_button_selector = browser.find_element(By.XPATH, "//button[text()='INICIAR ATENDIMENTO']")
+            # avançar_button_selector = WebDriverWait(browser, 10).until(
+            #     EC.visibility_of_element_located((By.XPATH, avançar_button_selector))
+            # )
+            # actions = ActionChains(browser)
+            # click_avancar = avançar_button_selector.get_attribute('data-click')
+            # actions.move_to_element(avançar_button_selector).click().perform()
+            avancar_js = '''
+var element = document.evaluate("//button[text()='INICIAR ATENDIMENTO']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+var clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+element.dispatchEvent(clickEvent);
+            '''
+            browser.execute_script(avancar_js)
+            print('INICIAR ATENDIMENTO SELECIONADO')
+        except Exception as e:
+            print(f"Falha ao iniciar atendimento, detalhes: {str(e)}")
             
     except Exception as e:
         print(f"Erro: {e}")
 
     return browser
 
-def ir_segundavia(browser : webdriver.Chrome):
+def ir_segundavia(browser: webdriver.Chrome):
     try:
-        fatura_link = WebDriverWait(browser, 20).until(
-            EC.presence_of_element_located((By.XPATH, "//a[text()='Fatura e segunda via']"))
+        fatura_link = WebDriverWait(browser, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Fatura e segunda via')]"))
         )
-        fatura_link.click()
+        data_click_value = fatura_link.get_attribute('onclick')
+        actions = ActionChains(browser)
+        actions.move_to_element(fatura_link).click().perform()
+        if data_click_value:
+            browser.execute_script(data_click_value)
         browser.implicitly_wait(10)
+        print("Clique realizado com sucesso!")
+        
     except Exception as e:
         print(f"Falha na busca da segunda via, detalhes: {str(e)}")
     return browser
 
-def get_fatura_infos(browser : webdriver.Chrome ):
-    valor = ''
-    data = ''
-    return ((valor, data), browser)
+def ir_novoatendimento(browser: webdriver.Chrome):
+    try:
+        botao_novo_atendimento = browser.find_element(By.NAME, 'headerPerformance_pyDisplayHarness_16')
+        actions = ActionChains(browser)
+        actions.move_to_element(botao_novo_atendimento).click().perform()
+        data_click_value = botao_novo_atendimento.get_attribute('data-click')
+        if data_click_value:
+            browser.execute_script(data_click_value)
+        browser.implicitly_wait(10)
+    except Exception as e:
+        print(f"Falha ao clicar no botão 'NOVO ATENDIMENTO', detalhes: {str(e)}")
+    return browser
 
+def get_fatura_infos(browser: webdriver.Chrome):
+    try:
+        time.sleep(5)
+
+        js_code = """
+let valores = Array.from(new Set(
+    Array.from(document.querySelectorAll("span"))
+    .filter(span => span.textContent.includes("R") && span.textContent.includes(","))
+    .map(span => span.textContent)
+));
+
+let datas = Array.from(new Set(
+    Array.from(document.querySelectorAll("span"))
+    .filter(span => (span.textContent.match(/\//g) || []).length === 2)
+    .map(span => span.textContent)
+)).slice(2);
+
+let status = Array.from(document.querySelectorAll("div"))
+    .filter(div => div.textContent.toLowerCase().includes("pago") || 
+                    div.textContent.toLowerCase().includes("não pago") || 
+                    div.textContent.toLowerCase().includes("vencido"))
+    .slice(0, valores.length) 
+    .map(div => {
+        const text = div.textContent.toLowerCase();
+        if (text.includes("pago")) {
+            return 'pago';
+        } else {
+            return 'em aberto';
+        }
+    }).slice(0, valores.length);
+
+return { valores, datas, status };
+        """
+
+        res = browser.execute_script(js_code)
+
+        print("Valores: ", res['valores'])
+        print("Datas: ", res['datas'])
+        print("Status: ", res['status'])
+        
+        return res, browser
     
+    except Exception as e:
+        print(f"Falha ao obter informações das faturas, detalhes: {str(e)}")
+        return None, browser
+   
 def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, logging) :
     """
     Inicia a procura por documento no navegador
@@ -332,4 +428,3 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, lo
         str(input("Pressione enter apos selecionar varejo..."))
         result = search_doc(browser, documento, tipo, logging, actions)
     return result
-
