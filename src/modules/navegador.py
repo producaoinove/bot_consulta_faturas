@@ -69,42 +69,42 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, logging, ac
     # browser.implicitly_wait(30)
     # time.sleep(10)
     # print("Saiu da pausa")
-    if tipo == 'EMPRESARIAL':
-        browser.implicitly_wait(15)
 
-        res = resposta_empresarial_busca(browser, documento, actions)
 
-        browser = res[0]
-        info_cliente = res[1]
+    browser.implicitly_wait(15)
 
-        if info_cliente == "Novo Cliente":
-            status = "Novo Cliente"
-        elif info_cliente == "Nova Fibra":
-            status = "Nova Fibra"
+    res = resposta_busca(browser, documento, actions, tipo)
+
+    browser = res[0]
+    info_cliente = res[1]
+
+    if info_cliente == "Novo Cliente":
+        status = "Novo Cliente"
+    elif info_cliente == "Nova Fibra":
+        status = "Nova Fibra"
+    elif info_cliente == "Legado":
+        status = "Legado"
+        browser = escolher_produto(browser, tipo)
+        str(input("Pressione Enter apos selecionar Produto e Avancar..."))
+
+        browser = escolher_servico(browser)
+        str(input("Pressione Enter apos escolher Servicos Oi..."))
+
+        browser = ir_segundavia(browser)
+        str(input("Pressione Enter apos ir para faturas e segunda via..."))
+        browser.switch_to.default_content()
+
+        buscar = get_fatura_infos(browser)
+        browser = buscar[1]
+        info_fatura = buscar[0]
+        print(documento, info_fatura)
+        str(input("Pressione Enter apos coletar dados do site..."))
+
+        browser = ir_novoatendimento(browser)
+        str(input("Pressione Enter apos retornar para novo atendimento..."))
         browser = retorna_selecao(browser)
+        str(input("Pressione Enter apos retornar para selecao..."))
 
-        return (status, data, valor)
-    
-    if tipo == 'VAREJO':
-        browser.implicitly_wait(15)
-        
-        res = resposta_varejo_busca(browser, documento, actions)
-
-        browser = res[0]
-        info_cliente = res[1]
-
-        if info_cliente == "Novo Cliente":
-            status = "Novo Cliente"
-        elif info_cliente == "Nova Fibra":
-            status = "Nova Fibra"
-        elif info_cliente == "Legado":
-            status = "Legado"
-            browser = escolher_produto(browser)
-            str(input("Pressione Enter apos selecionar produto...."))
-            browser = escolher_servico(browser)
-            str(input("Pressione Enter apos selecionar o serviço...."))
-
-        browser = retorna_selecao(browser)
         return (status, data, valor)
 
 def retorna_selecao(browser):
@@ -142,7 +142,7 @@ def buscar_cliente(browser, documento, actions, tipo_busca):
     try:
         actions.move_to_element(cnpj_search_button).click().perform()
     except:
-        cnpj_search_button = browser.find_element(By.NAME, f'PerformanceNovoAtendimentoBuscaCliente_pyDisplayHarness_{tipo_busca}')
+        cnpj_search_button = browser.find_element(By.NAME, f'SelecaoAplicacao_pyDisplayHarness_6')
         data_click_value = cnpj_search_button.get_attribute('data-click')
         if data_click_value:
             browser.execute_script(data_click_value)
@@ -190,44 +190,49 @@ return null;
 
     return (driver, 'Nova Fibra')
 
-def resposta_empresarial_busca(browser, documento, actions):
-    browser = buscar_cliente(browser, documento, actions, tipo_busca='20')
+def resposta_busca(browser, documento, actions, tipo_busca):
+    if tipo_busca == "VAREJO": browser = buscar_cliente(browser, documento, actions, tipo_busca='12')
+    else: browser = buscar_cliente(browser, documento, actions, tipo_busca='20')
     cliente = verificar_cliente(browser)
     browser = cliente[0]
     info_cliente = cliente[1]
     return (browser, info_cliente)
 
-def resposta_varejo_busca(browser, documento, actions):
-    browser = buscar_cliente(browser, documento, actions, tipo_busca='12')
-    cliente = verificar_cliente(browser)
-    browser = cliente[0]
-    info_cliente = cliente[1]
-    return (browser, info_cliente)
-
-def escolher_produto(browser):
+def escolher_produto(browser : webdriver.Chrome, tipo):
 
     try:
         produto_selector = '''
-        var xpath = "//span[text()='OITOTAL_FXBL']";
-        var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        var produtoElement = result.singleNodeValue;
-        if (produtoElement) {
-            produtoElement.click();
-            return "Produto encontrado e clicado";
-        } else {
-            return "Produto não encontrado";
-        }
+var xpath = "//span[text()='OITOTAL_FXBL']";
+var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+var produtoElement = result.singleNodeValue;
+if (produtoElement) {
+    produtoElement.click();
+    return "Produto encontrado e clicado";
+} else {
+    return "Produto não encontrado";
+}
         '''
         resultado = browser.execute_script(produto_selector)
         
         if resultado == "Produto encontrado e clicado":
-            avançar_button_selector = '''
-        var xpath = "//button[@name='MainNovoAtendimento_pyDisplayHarness_60']";
-        var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        var buttonElement = result.singleNodeValue;
-        buttonElement.click();
-            '''
-            browser.execute_script(avançar_button_selector)
+
+            actions = ActionChains(browser)
+
+            if tipo == "VAREJO":
+                elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_60')
+                data_click_value = elemento_avancar.get_attribute('data-click')
+                actions.move_to_element(elemento_avancar).click().perform()
+                if data_click_value:
+                    browser.execute_script(data_click_value)
+            elif tipo == "EMPRESARIAL":
+                elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_82')
+                data_click_value = elemento_avancar.get_attribute('data-click')
+                actions.move_to_element(elemento_avancar).click().perform()
+                if data_click_value:
+                    browser.execute_script(data_click_value)
+            else:
+                raise Exception("Tipo invalido de cliente")
+
 
             print("produto selecionado e pagina avançada")
 
@@ -242,39 +247,184 @@ def escolher_produto(browser):
 def escolher_servico(browser : webdriver.Chrome):
 
     try:
-        produto_selector = '''
-        var xpath = "/html/body/div[2]/form/div[3]/div/section/div/div/div/div/div[1]/div/table/tbody/tr[2]/td[2]/div/table/tbody/tr/td/div/table/tbody/tr[2]/td/div/div[2]/div/div/div/div/div/div/div/div/div[4]/div/div/div/div[2]/div/div/div/div/div[2]/div/div/div/div/div";
-        var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        var produtoElement = result.singleNodeValue;
-        produtoElement.click();
-        '''
-        browser.execute_script(produto_selector)
-        print('SERVIÇOS OI SELECIONADO')
-        avançar_button_selector = '''
-        var xpath = "//button[contains(text(), 'INICIAR ATENDIMENTO')]";
-        var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
-        var buttonElement = result.singleNodeValue;
-        buttonElement.click();
-            '''
-        browser.execute_script(avançar_button_selector)
-        print('INICIAR ATENDIMENTO SELECIONADO')
 
-        # print("produto selecionado e pagina avançada") Icoservico
-        time.sleep(5)
-        fatura_link = WebDriverWait(browser, 20).until(
-            EC.presence_of_element_located((By.XPATH, "//a[contains(text(), 'Fatura e segunda via')]"))
-        )
-        fatura_link.click()
+        try:
+            # WebDriverWait(browser, 20).until(
+            #     EC.presence_of_element_located((By.XPATH, "//div[@base_ref='pyWorkPage.IntentList(2)']"))
+            # )
+            
+#             var xpath = "//*[@aria-label='Painel Central']";
+# var result = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+# var produtoElement = result.singleNodeValue;
+# if (produtoElement) {
+#     produtoElement.click();
+#     console.log("Produto encontrado e clicado");
+# } else {
+#     console.log("Produto não encontrado");
+# }
+            main_iframe = WebDriverWait(browser, 20).until(
+                EC.presence_of_element_located((By.ID, "PegaGadget0Ifr"))
+            )
+            
+            browser.switch_to.frame(main_iframe)
+            service_btn = WebDriverWait(browser, 10).until(
+                EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'SERVIÇOS OI')]"))
+            )
+            service_btn.click()
+
+        except Exception as e:
+            print(f"Falha ao disparar evento, detalhes: {str(e)}")
+
+        str(input("Pressione Enter apos selecionar Serviços Oi..."))
+
+        try:
+            # avançar_button_selector = browser.find_element(By.XPATH, "//button[text()='INICIAR ATENDIMENTO']")
+            # avançar_button_selector = WebDriverWait(browser, 10).until(
+            #     EC.visibility_of_element_located((By.XPATH, avançar_button_selector))
+            # )
+            # actions = ActionChains(browser)
+            # click_avancar = avançar_button_selector.get_attribute('data-click')
+            # actions.move_to_element(avançar_button_selector).click().perform()
+            avancar_js = '''
+var element = document.evaluate("//button[text()='INICIAR ATENDIMENTO']", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+var clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true, view: window });
+element.dispatchEvent(clickEvent);
+            '''
+            browser.execute_script(avancar_js)
+            # browser.switch_to.default_content()
+
+            print('INICIAR ATENDIMENTO SELECIONADO')
+        except Exception as e:
+            print(f"Falha ao iniciar atendimento, detalhes: {str(e)}")
             
     except Exception as e:
         print(f"Erro: {e}")
 
     return browser
 
-def get_fatura_infos(browser : webdriver.Chrome):
-    print('teste')
+def ir_segundavia(browser: webdriver.Chrome):
+    try:
+        fatura_link = WebDriverWait(browser, 10).until(
+            EC.element_to_be_clickable((By.XPATH, "//a[contains(text(), 'Fatura e segunda via')]"))
+        )
+        actions = ActionChains(browser)
+        actions.move_to_element(fatura_link).click().perform()
+        browser.implicitly_wait(10)
+        print("Clique realizado com sucesso!")
+        
+    except Exception as e:
+        print(f"Falha na busca da segunda via, detalhes: {str(e)}")
+    return browser
+
+def ir_novoatendimento(browser: webdriver.Chrome):
+    try:
+        botao_novo_atendimento = browser.find_element(By.NAME, 'headerPerformance_pyDisplayHarness_16')
+        actions = ActionChains(browser)
+        actions.move_to_element(botao_novo_atendimento).click().perform()
+        data_click_value = botao_novo_atendimento.get_attribute('data-click')
+        if data_click_value:
+            browser.execute_script(data_click_value)
+        browser.implicitly_wait(10)
+    except Exception as e:
+        print(f"Falha ao clicar no botão 'NOVO ATENDIMENTO', detalhes: {str(e)}")
+    return browser
+
+def get_fatura_infos(browser: webdriver.Chrome):
+    try:
+        time.sleep(5)
+        consult_iframe = WebDriverWait(browser, 20).until(
+            EC.presence_of_element_located((By.ID, "PegaGadget1Ifr"))
+        )
+            
+        browser.switch_to.frame(consult_iframe)
+        
+        js_code = """
+let valores = Array.from(new Set(
+    Array.from(document.querySelectorAll("span"))
+    .filter(span => span.textContent.includes("$"))
+    .map(span => span.textContent)
+));
+
+let datas = Array.from(new Set(
+    Array.from(document.querySelectorAll("span"))
+    .filter(span => (span.textContent.match(/\//g) || []).length === 2)
+    .map(span => span.textContent)
+)).slice(2);
+
+let status = Array.from(document.querySelectorAll("div"))
+    .filter(div => div.textContent.toLowerCase().includes("pago") || 
+                    div.textContent.toLowerCase().includes("não pago") || 
+                    div.textContent.toLowerCase().includes("vencido"))
+    .slice(0, valores.length) 
+    .map(div => {
+       const text = div.textContent.toLowerCase();
+        if (text.includes("pago") ) {
+            return 'pago';
+        } else {
+            return 'em aberto';
+        }
+    }).slice(0, valores.length);
+
+return { valores, datas, status };
+        """
+
+        res = browser.execute_script(js_code)
+        
+        fatura_grid = WebDriverWait(browser, 20).until(
+            EC.presence_of_element_located((By.XPATH, "//*[@data-node-id='ConsultaDeFaturas']"))
+        )
+        
+        datas = fatura_grid.find_elements(By.XPATH, "//span[contains(text(), '/')]")
+        lista_datas = []
+        for i in datas:
+            valor = i.text
+            lista_datas.append(valor)
+        
+        lista_datas = lista_datas[3:]
+        res['datas'] = lista_datas
+        
+        valores = fatura_grid.find_elements(By.XPATH, "//*[contains(text(), '$')]")
+        
+        lista_valores = []
+        for i in valores:
+            valor = i.text
+            if valor != '':
+                lista_valores.append(valor)
+        
+        res['valores'] = lista_valores
+        
+        status = fatura_grid.find_elements(By.XPATH, "//*[contains(text(), 'Não Pago') or contains(text(), 'Pago') or contains(text(), 'Vencido')]")
+        lista_status = []
+        for i in status:
+            valor = i.text
+            if valor == 'Não Pago':
+                valor = 'em aberto'
+                lista_status.append(valor)
+            if valor == 'Pago':
+                valor = 'pago'
+                lista_status.append(valor)
+            if valor == 'Vencido':
+                valor = 'em aberto'
+                lista_status.append(valor)
+        
+        res['status'] = lista_status
+
+        # Implementar for usando o indice da lista de data
+
+        # if len(lista_datas) > len(lista_status):
+        #     if lista_status[0] == 'em aberto' and lista_status[1] == 'pago':
+        #         lista_datas.pop(lista_datas[0] + 2)
+
+        print("Valores: ", res['valores'])
+        print("Datas: ", res['datas'])
+        print("Status: ", res['status'])
+        
+        return res, browser
     
-    
+    except Exception as e:
+        print(f"Falha ao obter informações das faturas, detalhes: {str(e)}")
+        return None, browser
+   
 def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, logging) :
     """
     Inicia a procura por documento no navegador
