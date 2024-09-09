@@ -2,13 +2,14 @@ import os
 import pandas as pd
 from selenium import webdriver
 
-def coletar_informacoes(documento: str, tipo: str, browser : webdriver.Chrome, logging) -> tuple:
+def coletar_informacoes(documento: str, tipo: str, mes_safra: str, browser : webdriver.Chrome, logging) -> tuple:
     """
     Recebe um documento (CNPJ ou CPF) e retorna os dados exigidos (VALOR; STATUS; DATA)
 
     Entrada:
         documento (str): o documento que serão buscados
         tipo_pessoa (str): se o cliente é CPF | MEI | NMEI
+        mes_safra (str): qual o mes da safra em questão
 
     Saída:
         Uma tupla com os três dados (VALOR, STATUS, DATA)
@@ -18,7 +19,7 @@ def coletar_informacoes(documento: str, tipo: str, browser : webdriver.Chrome, l
 
     if 'CPF' in tipo.upper():
         tipo_p = "VAREJO"
-        atendimento = iniciar_atendimento(browser, documento, tipo_p, logging)
+        atendimento = iniciar_atendimento(browser, documento, tipo_p, mes_safra, logging)
         status = atendimento[0]
         data = atendimento[1]
         valor = atendimento[2]
@@ -36,7 +37,7 @@ def coletar_informacoes(documento: str, tipo: str, browser : webdriver.Chrome, l
         # data = "TESTE"
     elif 'MEI' in tipo.upper() or 'EMP' in tipo.upper():
         tipo_p = "EMPRESARIAL"
-        atendimento = iniciar_atendimento(browser, documento, tipo_p, logging)
+        atendimento = iniciar_atendimento(browser, documento, tipo_p, mes_safra, logging)
         status = atendimento[0]
         data = atendimento[1]
         valor = atendimento[2]
@@ -89,8 +90,9 @@ def main(logging):
     for _, linhas in df.iterrows():
         doc = linhas['DOC']
         tipo_p = linhas['TIPO_CLIENTE']
-        print(doc, tipo_p)
-        valor, status, data = coletar_informacoes(doc, tipo_p, browser, logging)
+        mes_safra = linhas['MES_SAFRA']
+        print(doc, tipo_p, mes_safra)
+        valor, status, data = coletar_informacoes(doc, tipo_p, mes_safra, browser, logging)
         print(valor, status, data)
         dados_extraidos.append((valor, status, data))
         

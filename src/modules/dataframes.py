@@ -28,13 +28,14 @@ Saída:
     """
 
     if not isinstance(df, pd.DataFrame):
-        raise Exception("Opa... parametro da função 'exportar_csv' foi passado errado. df")
+        raise Exception("Opa... parametro da função 'df' foi passado errado. df")
 
     df_tratado = df.copy()
-    df_tratado = df_tratado[['CNPJChave', 'UNIDADE', 'Sistema OI']]
+    df_tratado = df_tratado[['CNPJChave', 'UNIDADE', 'Sistema OI', 'Safra']]
     df_tratado.rename(columns={'CNPJChave': 'DOC', 'UNIDADE': 'TIPO_CLIENTE'}, inplace=True)
     df_tratado = df_tratado[df_tratado['Sistema OI'] == "NO LEGADO"]
     df_tratado.drop(columns=['Sistema OI'])
+    df_tratado['MES_SAFRA'] = pd.to_datetime(df_tratado['Safra'], format='%Y-%m-%d %H:%M:%S', errors='coerce').dt.month.astype(str)
 
     return df_tratado
 
