@@ -137,9 +137,9 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, mes_safra: 
         buscar = get_fatura_infos(browser, mes_safra)
         info_fatura = buscar[0]
         browser = buscar[1]
-        status = buscar['status']
-        data = buscar['datas']
-        valor = buscar['valores']
+        status = info_fatura['status']
+        data = info_fatura['datas']
+        valor = info_fatura['valores']
         print(documento, info_fatura)
         str(input("Pressione Enter apos coletar dados do site..."))
 
