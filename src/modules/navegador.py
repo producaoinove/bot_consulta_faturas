@@ -78,7 +78,7 @@ def realizar_login(navegador: webdriver.Chrome, ambiente) -> webdriver.Chrome:
     """
 
     try:
-        navegador.get(ambiente)        
+        navegador.get(ambiente)
         str(input("Pressione enter após o login ..."))
         return navegador
     except Exception as e:
@@ -125,29 +125,42 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, mes_safra: 
     elif info_cliente == "Legado":
         status = "Legado"
         browser = escolher_produto(browser, tipo)
-        str(input("Pressione Enter apos selecionar Produto e Avancar..."))
-
+        time.sleep(4)
+       
         browser = escolher_servico(browser)
-        str(input("Pressione Enter apos escolher Servicos Oi..."))
+        time.sleep(4)
 
         browser = ir_segundavia(browser)
-        str(input("Pressione Enter apos ir para faturas e segunda via..."))
+        time.sleep(4)
         browser.switch_to.default_content()
 
         buscar = get_fatura_infos(browser, mes_safra)
         info_fatura = buscar[0]
         browser = buscar[1]
-        status = info_fatura['status']
-        data = info_fatura['datas']
-        valor = info_fatura['valores']
+        
+        try:
+            status = info_fatura['status'][0]
+        except:
+            status = ''
+            
+        try:
+            data = info_fatura['datas'][0]
+        except:
+            data = ''
+            
+        try:
+            valor = info_fatura['valores'][0]
+        except:
+            valor = ''
+
         print(documento, info_fatura)
-        str(input("Pressione Enter apos coletar dados do site..."))
+        time.sleep(4)
 
         browser = ir_novoatendimento(browser)
-        str(input("Pressione Enter apos retornar para novo atendimento..."))
+        time.sleep(4)
 
         browser = retorna_selecao(browser)
-        str(input("Pressione Enter apos retornar para selecao..."))
+        time.sleep(4)
 
         return (status, data, valor)
 
@@ -197,7 +210,7 @@ def buscar_cliente(browser, documento, actions, tipo_busca):
 
 def verificar_cliente(driver):
 
-    str(input('Pressione enter apos buscar o documento...'))
+    time.sleep(4)
 
     script_span = '''
 var xpath = "//span[text()='OITOTAL_FXBL']";
@@ -231,7 +244,8 @@ return null;
 
     if result_div:
         return (driver, 'Novo Cliente')
-
+    
+        
     return (driver, 'Nova Fibra')
 
 def resposta_busca(browser, documento, actions, tipo_busca):
@@ -268,12 +282,32 @@ if (produtoElement) {
                 actions.move_to_element(elemento_avancar).click().perform()
                 if data_click_value:
                     browser.execute_script(data_click_value)
+                try:
+                    div_nao_elegivel = browser.find_element(By.XPATH, "//span[contains(text(), 'Esse produto não é elegível para migração. Somente para novo endereço')]")
+                    if div_nao_elegivel.is_displayed:
+                        elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_60')
+                        data_click_value = elemento_avancar.get_attribute('data-click')
+                        actions.move_to_element(elemento_avancar).click().perform()
+                        if data_click_value:
+                            browser.execute_script(data_click_value)
+                except:
+                    print("Div de aviso não encontrada, seguindo o fluxo")
             elif tipo == "EMPRESARIAL":
                 elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_82')
                 data_click_value = elemento_avancar.get_attribute('data-click')
                 actions.move_to_element(elemento_avancar).click().perform()
                 if data_click_value:
                     browser.execute_script(data_click_value)
+                try:
+                    div_nao_elegivel = browser.find_element(By.XPATH, "//span[contains(text(), 'Esse produto não é elegível para migração. Somente para novo endereço')]")
+                    if div_nao_elegivel.is_displayed:
+                        elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_82')
+                        data_click_value = elemento_avancar.get_attribute('data-click')
+                        actions.move_to_element(elemento_avancar).click().perform()
+                        if data_click_value:
+                            browser.execute_script(data_click_value)
+                except:
+                    print("Div de aviso não encontrada, seguindo o fluxo")
             else:
                 raise Exception("Tipo invalido de cliente")
 
@@ -319,7 +353,7 @@ def escolher_servico(browser : webdriver.Chrome):
         except Exception as e:
             print(f"Falha ao disparar evento, detalhes: {str(e)}")
 
-        str(input("Pressione Enter apos selecionar Serviços Oi..."))
+        time.sleep(4)
 
         try:
             # avançar_button_selector = browser.find_element(By.XPATH, "//button[text()='INICIAR ATENDIMENTO']")
@@ -494,7 +528,7 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, me
         browser.implicitly_wait(1)
         browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
         browser.implicitly_wait(5)
-        str(input("Pressione enter apos selecionar empresarial..."))
+        time.sleep(4)
         result = search_doc(browser, documento, tipo, mes_safra, logging, actions)
         
     if tipo == 'VAREJO':
@@ -505,6 +539,6 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, me
         browser.implicitly_wait(1)
         browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
         browser.implicitly_wait(5)
-        str(input("Pressione enter apos selecionar varejo..."))
+        time.sleep(4)
         result = search_doc(browser, documento, tipo, mes_safra, logging, actions)
     return result
