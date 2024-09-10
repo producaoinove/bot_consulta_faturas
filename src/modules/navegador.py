@@ -125,16 +125,16 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, mes_safra: 
     elif info_cliente == "Legado":
         status = "Legado"
         browser = escolher_produto(browser, tipo)
-        time.sleep(4)
+        time.sleep(5)
        
         browser = escolher_servico(browser)
-        time.sleep(4)
+        time.sleep(5)
 
         browser = ir_segundavia(browser)
-        time.sleep(4)
+        time.sleep(5)
         browser.switch_to.default_content()
 
-        buscar = get_fatura_infos(browser, mes_safra)
+        buscar = get_fatura_infos(browser, mes_safra, tipo)
         info_fatura = buscar[0]
         browser = buscar[1]
         
@@ -154,13 +154,13 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, mes_safra: 
             valor = ''
 
         print(documento, info_fatura)
-        time.sleep(4)
+        time.sleep(5)
 
         browser = ir_novoatendimento(browser)
-        time.sleep(4)
+        time.sleep(5)
 
         browser = retorna_selecao(browser)
-        time.sleep(4)
+        time.sleep(5)
 
         return (status, data, valor)
 
@@ -210,7 +210,7 @@ def buscar_cliente(browser, documento, actions, tipo_busca):
 
 def verificar_cliente(driver):
 
-    time.sleep(4)
+    time.sleep(5)
 
     script_span = '''
 var xpath = "//span[text()='OITOTAL_FXBL']";
@@ -271,6 +271,7 @@ if (produtoElement) {
 }
         '''
         resultado = browser.execute_script(produto_selector)
+        time.sleep(5)
         
         if resultado == "Produto encontrado e clicado":
 
@@ -353,7 +354,7 @@ def escolher_servico(browser : webdriver.Chrome):
         except Exception as e:
             print(f"Falha ao disparar evento, detalhes: {str(e)}")
 
-        time.sleep(4)
+        time.sleep(5)
 
         try:
             # avançar_button_selector = browser.find_element(By.XPATH, "//button[text()='INICIAR ATENDIMENTO']")
@@ -408,7 +409,7 @@ def ir_novoatendimento(browser: webdriver.Chrome):
         print(f"Falha ao clicar no botão 'NOVO ATENDIMENTO', detalhes: {str(e)}")
     return browser
 
-def get_fatura_infos(browser: webdriver.Chrome, mes_safra: str):
+def get_fatura_infos(browser: webdriver.Chrome, mes_safra: str, tipo: str):
     try:
         time.sleep(5)
         consult_iframe = WebDriverWait(browser, 20).until(
@@ -451,13 +452,23 @@ return { valores, datas, status };
         fatura_grid = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.XPATH, "//*[@data-node-id='ConsultaDeFaturas']"))
         )
-        
-        datas = fatura_grid.find_elements(By.XPATH, "//span[contains(text(), '/')]")
+        if tipo == 'EMPRESARIAL':
+            datas = fatura_grid.find_elements(By.XPATH, "//*[contains(text(), '/')]")
+        else:
+            datas = fatura_grid.find_elements(By.XPATH, "//span[contains(text(), '/')]")
         lista_datas = []
         for i in datas:
             valor = i.text
-            lista_datas.append(valor)
-        lista_datas = lista_datas[3:]
+            if valor != '':
+                lista_datas.append(valor)
+        if tipo == 'EMPRESARIAL':
+            lista_datas = lista_datas
+        else:
+            if lista_datas[3] != '':
+                lista_datas = lista_datas[2:]
+            else:
+                lista_datas = lista_datas[3:]
+            
         res['datas'] = lista_datas
 
         valores = fatura_grid.find_elements(By.XPATH, "//*[contains(text(), '$')]")
@@ -482,7 +493,15 @@ return { valores, datas, status };
                 valor = 'em aberto'
                 lista_status.append(valor)
         res['status'] = lista_status
-
+        tamanho_status = len(lista_status)
+        
+        # for index, status in enumerate(lista_status):
+        #     if tamanho_status >= 2:
+        #         prox_status = index + 1
+        #         status_anterior = index - 1
+        #         if status == 'pago' and index == 0:
+        #             lista_datas.pop(prox_status)
+            
         fatura_data = {
             'datas': lista_datas,
             'valores': lista_valores,
@@ -528,7 +547,7 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, me
         browser.implicitly_wait(1)
         browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
         browser.implicitly_wait(5)
-        time.sleep(4)
+        time.sleep(5)
         result = search_doc(browser, documento, tipo, mes_safra, logging, actions)
         
     if tipo == 'VAREJO':
@@ -539,6 +558,6 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, me
         browser.implicitly_wait(1)
         browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
         browser.implicitly_wait(5)
-        time.sleep(4)
+        time.sleep(5)
         result = search_doc(browser, documento, tipo, mes_safra, logging, actions)
     return result

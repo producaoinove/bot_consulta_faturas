@@ -36,5 +36,6 @@ if __name__ == "__main__":
             logging.info(f'Total de registros nao validados: {nao_validado}')
 
         logging.info("Bot finalizado!")
+        print("Bot Consultar Faturas Finalizado")
     except Exception as e:
         logging.error(f"Deu erro no bot. Detalhes: {str(e)}")
