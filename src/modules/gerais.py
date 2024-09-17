@@ -87,15 +87,21 @@ def main(logging):
     dados_extraidos = []
     print("Arquivo xlsx lido e dados extraidos")
 
-    for _, linhas in df.iterrows():
+    for index, linhas in df.iterrows():
+        if index != 0:
+            print("----------------------------------------------------------------------------------------")
         doc = linhas['DOC']
         tipo_p = linhas['TIPO_CLIENTE']
         mes_safra = linhas['MES_SAFRA']
         print(doc, tipo_p, mes_safra)
-        valor, status, data = coletar_informacoes(doc, tipo_p, mes_safra, browser, logging)
-        print(valor, status, data)
+        try:
+            valor, status, data = coletar_informacoes(doc, tipo_p, mes_safra, browser, logging)
+            print(valor, status, data)
+        except:
+            logging.error(f"Erro de leitura, documento {doc}")
+            status = "ERRO DE LEITURA"
         dados_extraidos.append((valor, status, data))
-        
+
     df[['VALOR', 'STATUS', 'DATA']] = pd.DataFrame(dados_extraidos, index=df.index)
     df = df[['DOC', 'VALOR', 'STATUS', 'DATA']]
     res =  exportar_controle_qualidade(df, arquivo_output)

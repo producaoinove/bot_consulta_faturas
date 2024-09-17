@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException
 import time
 
 def process_fatura_data(fatura_data: dict, mes_safra: str):
@@ -38,6 +39,12 @@ def process_fatura_data(fatura_data: dict, mes_safra: str):
             'valores': [lista_valores[idx] for idx in safra_indices],
             'status': [lista_status[idx] for idx in safra_indices]
         }
+        
+        if '*Faturas com valor inferior à R$ 5,00 não são geradas' in resultado_final['valores']:
+            try:
+                resultado_final['valores'].remove('*Faturas com valor inferior à R$ 5,00 não são geradas')
+            except:
+                print(f"Erro ao tentar remover palavras da lista")
         print("Valores: ", resultado_final['valores'])
         print("Datas: ", resultado_final['datas'])
         print("Status: ", resultado_final['status'])
@@ -113,8 +120,9 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, mes_safra: 
 
     browser.implicitly_wait(15)
 
-    res = resposta_busca(browser, documento, actions, tipo)
-
+    res = resposta_busca(browser, documento, actions, tipo, logging)
+    if res == "Element not found":
+        return "Element not found"
     browser = res[0]
     info_cliente = res[1]
 
@@ -125,13 +133,13 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, mes_safra: 
     elif info_cliente == "Legado":
         status = "Legado"
         browser = escolher_produto(browser, tipo)
-        time.sleep(5)
+        time.sleep(6)
        
         browser = escolher_servico(browser)
-        time.sleep(5)
+        time.sleep(6)
 
         browser = ir_segundavia(browser)
-        time.sleep(5)
+        time.sleep(6)
         browser.switch_to.default_content()
 
         buscar = get_fatura_infos(browser, mes_safra, tipo)
@@ -154,27 +162,29 @@ def search_doc(browser: webdriver.Chrome, documento: str, tipo: str, mes_safra: 
             valor = ''
 
         print(documento, info_fatura)
-        time.sleep(5)
+        time.sleep(6)
 
         browser = ir_novoatendimento(browser)
-        time.sleep(5)
+        time.sleep(6)
 
-        browser = retorna_selecao(browser)
-        time.sleep(5)
+    browser = retorna_selecao(browser)
+    time.sleep(6)
 
-        return (status, data, valor)
+    return (status, data, valor)
 
 def retorna_selecao(browser):
     try:
         username = WebDriverWait(browser, 20).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, 'a[data-test-id="2017091914214003818486"]'))
         )
+        time.sleep(6)
         username.click()
         WebDriverWait(browser, 20).until(
             EC.visibility_of_element_located((By.ID, 'ItemMiddle'))
         )
         actions = ActionChains(browser)
         return_select_screen = browser.find_element(By.ID, 'ItemMiddle')
+        time.sleep(6)
         actions.move_to_element(return_select_screen).click().perform()
         browser.execute_script("switchApplication('OiAuthentication')")
     except Exception as e:
@@ -182,11 +192,23 @@ def retorna_selecao(browser):
 
     return browser
 
-def buscar_cliente(browser, documento, actions, tipo_busca):
-    cnpj_input = WebDriverWait(browser, 20).until(
-        EC.presence_of_element_located((By.ID, 'AuxiliarCOD_IDENT_PESSOA'))
-    )
-    
+def buscar_cliente(browser, documento, actions, tipo_busca, logging):
+    try:
+        cnpj_input = WebDriverWait(browser, 20).until(
+            EC.presence_of_element_located((By.ID, 'AuxiliarCOD_IDENT_PESSOA'))
+        )
+        print("Pegou CNPJ")
+        if not cnpj_input.is_displayed():
+            print("ATENCAO: CAMPO CNPJ NAO ESTA NA TELA")
+            return "Element not found"
+    except NoSuchElementException:
+        print("NoSuchElementException")
+        return "Element not found"
+    except Exception as e:
+        print("Deu erro retorno: elemento CNPJ nao encontrado")
+        logging.info(f"")
+        return "Element not found"
+
     cnpj_input.send_keys(documento)
     data_change_value = cnpj_input.get_attribute('data-change')
     if data_change_value:
@@ -204,13 +226,13 @@ def buscar_cliente(browser, documento, actions, tipo_busca):
         if data_click_value:
             browser.execute_script(data_click_value)
 
-    time.sleep(5)
+    time.sleep(6)
 
     return browser
 
 def verificar_cliente(driver):
 
-    time.sleep(5)
+    time.sleep(6)
 
     script_span = '''
 var xpath = "//span[text()='OITOTAL_FXBL']";
@@ -248,9 +270,11 @@ return null;
         
     return (driver, 'Nova Fibra')
 
-def resposta_busca(browser, documento, actions, tipo_busca):
-    if tipo_busca == "VAREJO": browser = buscar_cliente(browser, documento, actions, tipo_busca='12')
-    else: browser = buscar_cliente(browser, documento, actions, tipo_busca='20')
+def resposta_busca(browser, documento, actions, tipo_busca, logging):
+    if tipo_busca == "VAREJO": browser = buscar_cliente(browser, documento, actions, tipo_busca='12', logging = logging)
+    else: browser = buscar_cliente(browser, documento, actions, tipo_busca='20', logging = logging)
+    if browser == "Element not found":
+        return "Element not found"
     cliente = verificar_cliente(browser)
     browser = cliente[0]
     info_cliente = cliente[1]
@@ -271,7 +295,7 @@ if (produtoElement) {
 }
         '''
         resultado = browser.execute_script(produto_selector)
-        time.sleep(5)
+        time.sleep(6)
         
         if resultado == "Produto encontrado e clicado":
 
@@ -285,7 +309,7 @@ if (produtoElement) {
                     browser.execute_script(data_click_value)
                 try:
                     div_nao_elegivel = browser.find_element(By.XPATH, "//span[contains(text(), 'Esse produto não é elegível para migração. Somente para novo endereço')]")
-                    if div_nao_elegivel.is_displayed:
+                    if div_nao_elegivel.is_displayed():
                         elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_60')
                         data_click_value = elemento_avancar.get_attribute('data-click')
                         actions.move_to_element(elemento_avancar).click().perform()
@@ -301,7 +325,7 @@ if (produtoElement) {
                     browser.execute_script(data_click_value)
                 try:
                     div_nao_elegivel = browser.find_element(By.XPATH, "//span[contains(text(), 'Esse produto não é elegível para migração. Somente para novo endereço')]")
-                    if div_nao_elegivel.is_displayed:
+                    if div_nao_elegivel.is_displayed():
                         elemento_avancar = browser.find_element(By.NAME, 'MainNovoAtendimento_pyDisplayHarness_82')
                         data_click_value = elemento_avancar.get_attribute('data-click')
                         actions.move_to_element(elemento_avancar).click().perform()
@@ -354,7 +378,7 @@ def escolher_servico(browser : webdriver.Chrome):
         except Exception as e:
             print(f"Falha ao disparar evento, detalhes: {str(e)}")
 
-        time.sleep(5)
+        time.sleep(6)
 
         try:
             # avançar_button_selector = browser.find_element(By.XPATH, "//button[text()='INICIAR ATENDIMENTO']")
@@ -411,7 +435,7 @@ def ir_novoatendimento(browser: webdriver.Chrome):
 
 def get_fatura_infos(browser: webdriver.Chrome, mes_safra: str, tipo: str):
     try:
-        time.sleep(5)
+        time.sleep(6)
         consult_iframe = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.ID, "PegaGadget1Ifr"))
         )
@@ -533,13 +557,13 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, me
     # access_type_select = WebDriverWait(browser, 20).until(
     #     EC.presence_of_element_located((By.XPATH, '//*[@id="AcessoSelecionado"]'))
     # )
-    access_type_select = Select(browser.find_element(By.XPATH, '//*[@id="AcessoSelecionado"]'))
     emp_select = 'Oi360Empresarial'
     var_select = 'Oi360Varejo'
     
-    init_button = browser.find_element(By.XPATH, "//button[contains(text(), 'INICIAR')]")
     
     if tipo == 'EMPRESARIAL':
+        access_type_select = Select(browser.find_element(By.XPATH, '//*[@id="AcessoSelecionado"]'))
+        init_button = browser.find_element(By.XPATH, "//button[contains(text(), 'INICIAR')]")
         access_type_select.select_by_visible_text(emp_select)
         browser.implicitly_wait(5)
         actions = ActionChains(browser)
@@ -547,10 +571,32 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, me
         browser.implicitly_wait(1)
         browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
         browser.implicitly_wait(5)
-        time.sleep(5)
+        time.sleep(6)
         result = search_doc(browser, documento, tipo, mes_safra, logging, actions)
-        
+        if result == "Element not found":
+            browser.back()
+            try:
+                browser.find_element(By.XPATH, "//button[contains(text(), 'INICIAR')]")
+            except:
+                browser.back()
+                init_button = browser.find_element(By.XPATH, "//button[contains(text(), 'INICIAR')]")
+                actions.move_to_element(init_button).click().perform()
+                browser.implicitly_wait(1)
+                browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
+                browser.implicitly_wait(5)
+                time.sleep(6)
+                result = search_doc(browser, documento, tipo, mes_safra, logging, actions)
+
+            init_button = browser.find_element(By.XPATH, "//button[contains(text(), 'INICIAR')]")
+            actions.move_to_element(init_button).click().perform()
+            browser.implicitly_wait(1)
+            browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
+            browser.implicitly_wait(5)
+            time.sleep(6)
+            result = search_doc(browser, documento, tipo, mes_safra, logging, actions)
     if tipo == 'VAREJO':
+        access_type_select = Select(browser.find_element(By.XPATH, '//*[@id="AcessoSelecionado"]'))
+        init_button = browser.find_element(By.XPATH, "//button[contains(text(), 'INICIAR')]")
         access_type_select.select_by_visible_text(var_select)
         browser.implicitly_wait(5)
         actions = ActionChains(browser)
@@ -558,6 +604,27 @@ def iniciar_atendimento(browser: webdriver.Chrome, documento: str, tipo: str, me
         browser.implicitly_wait(1)
         browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
         browser.implicitly_wait(5)
-        time.sleep(5)
+        time.sleep(6)
         result = search_doc(browser, documento, tipo, mes_safra, logging, actions)
+        if result == "Element not found":
+            browser.back()
+
+            try:
+                browser.find_element(By.XPATH, "//button[contains(text(), 'INICIAR')]")
+            except:
+                browser.back()
+                init_button = browser.find_element(By.XPATH, "//button[contains(text(), 'INICIAR')]")
+                actions.move_to_element(init_button).click().perform()
+                browser.implicitly_wait(1)
+                browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
+                browser.implicitly_wait(5)
+                time.sleep(6)
+                result = search_doc(browser, documento, tipo, mes_safra, logging, actions)
+            init_button = browser.find_element(By.XPATH, "//button[contains(text(), 'INICIAR')]")
+            actions.move_to_element(init_button).click().perform()
+            browser.implicitly_wait(1)
+            browser.execute_script('switchApplication("#~OperatorID.AcessoSelecionado~#")')
+            browser.implicitly_wait(5)
+            time.sleep(6)
+            result = search_doc(browser, documento, tipo, mes_safra, logging, actions)
     return result

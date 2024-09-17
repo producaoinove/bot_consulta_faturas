@@ -28,7 +28,7 @@ if __name__ == "__main__":
             inicial = res[0]
             buscados = res[1]
             validado = res[2]
-            nao_validado = res[3]
+            nao_validado = int(validado) - int(inicial)
 
             logging.info(f'Total de registros inicial: {inicial}')
             logging.info(f'Total de registros buscados: {buscados}')

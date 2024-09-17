@@ -35,7 +35,8 @@ Saída:
     df_tratado.rename(columns={'CNPJChave': 'DOC', 'UNIDADE': 'TIPO_CLIENTE'}, inplace=True)
     df_tratado = df_tratado[df_tratado['Sistema OI'] == "NO LEGADO"]
     df_tratado.drop(columns=['Sistema OI'])
-    df_tratado['MES_SAFRA'] = pd.to_datetime(df_tratado['Safra'], format='%Y-%m-%d %H:%M:%S', errors='coerce').dt.month.astype(str)
+    df_tratado['MES_SAFRA'] = pd.to_datetime(df_tratado['Safra'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
+    df_tratado['MES_SAFRA'] = df_tratado['MES_SAFRA'].dt.month.astype(str).apply(lambda x: str(int(x) + 1))
 
     return df_tratado
 
