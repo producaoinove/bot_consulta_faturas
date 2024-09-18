@@ -206,7 +206,6 @@ def buscar_cliente(browser, documento, actions, tipo_busca, logging):
         return "Element not found"
     except Exception as e:
         print("Deu erro retorno: elemento CNPJ nao encontrado")
-        logging.info(f"")
         return "Element not found"
 
     cnpj_input.send_keys(documento)

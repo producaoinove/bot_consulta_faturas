@@ -80,6 +80,7 @@ def main(logging):
     arquivo_input = os.path.join(path_entrada, "controle_qualidade.xlsx")
     planilha_input = "Safras em Tratamento"
     arquivo_output = os.path.join(path_saida, "relatorio.csv")
+    arquivo_error_out = os.path.join(path_saida, "relatorio_com_erros.csv")
 
     df = ler_controle_qualidade(arquivo_input, planilha_input)
     total_inicial = len(df)
@@ -96,15 +97,29 @@ def main(logging):
         print(doc, tipo_p, mes_safra)
         try:
             valor, status, data = coletar_informacoes(doc, tipo_p, mes_safra, browser, logging)
+            if valor == '' and status == '' and data == '':
+                dados_extraidos.append(('R$0,00', 'ERRO DE LEITURA', 'ERRO'))
+            else:
+                dados_extraidos.append((valor, status, data))
             print(valor, status, data)
         except:
             logging.error(f"Erro de leitura, documento {doc}")
             status = "ERRO DE LEITURA"
-        dados_extraidos.append((valor, status, data))
+            dados_extraidos.append(("R$0,00", status, "ERRO"))
 
-    df[['VALOR', 'STATUS', 'DATA']] = pd.DataFrame(dados_extraidos, index=df.index)
+    if ('', '', '') in dados_extraidos:
+        dados_extraidos.remove(('', '', ''))
+
+    df[['VALOR', 'STATUS', 'DATA']] = pd.DataFrame(dados_extraidos, index = df.index)
     df = df[['DOC', 'VALOR', 'STATUS', 'DATA']]
+    try:
+        df_error = df[df['STATUS'] == 'ERRO DE LEITURA']
+        exportar_controle_qualidade(df_error, arquivo_error_out)
+    except Exception as e:
+        logging.error(f"Erro na criação do arquivo de relatório com os erros, Detalhes: {e}")
+    df = df[df['STATUS'] != 'ERRO DE LEITURA']
     res =  exportar_controle_qualidade(df, arquivo_output)
+
     if res == "SUCESSO":
         total_buscados = len(df)
         total_validados = df['VALOR'].notna().sum()
