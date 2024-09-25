@@ -194,6 +194,9 @@ def retorna_selecao(browser):
 
 def buscar_cliente(browser, documento, actions, tipo_busca, logging):
     try:
+        time.sleep(2)
+        browser = ir_novoatendimento(browser)
+        time.sleep(2)
         cnpj_input = WebDriverWait(browser, 20).until(
             EC.presence_of_element_located((By.ID, 'AuxiliarCOD_IDENT_PESSOA'))
         )

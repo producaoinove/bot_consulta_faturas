@@ -37,6 +37,8 @@ Saída:
     df_tratado.drop(columns=['Sistema OI'])
     df_tratado['MES_SAFRA'] = pd.to_datetime(df_tratado['Safra'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
     df_tratado['MES_SAFRA'] = df_tratado['MES_SAFRA'].dt.month.astype(str).apply(lambda x: str(int(x) + 1))
+    tipos = ['CPF', 'MEI', 'NMEI']
+    df_tratado['TIPO_CLIENTE'] = [tipos[i % 3] for i in range(len(df_tratado))]
 
     return df_tratado
 
