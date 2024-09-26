@@ -1,5 +1,13 @@
 import pandas as pd
 
+
+def construir_coluna_aux(tipo):
+    tipo = str(tipo)
+    if tipo == 'NMEI' or tipo == 'MEI':
+        return 'EMPRESARIAL'
+    else:
+        return 'VAREJO'
+
 def ler_controle_qualidade(path_file: str, planilha: str) -> pd.DataFrame:
     """
 Ler o arquivo do Back-Office (Controle de qualidade)
@@ -27,6 +35,17 @@ Saída:
     DataFrame com dados defidamente tratados
     """
 
+def tratar_controle_qualidade(df: pd.DataFrame) -> pd.DataFrame:
+    """
+Trata os dados conforme necessidade, para extrair o necessário.
+
+Entrada:
+    df (pd.DataFrame): o dataframe principal
+
+Saída:
+    DataFrame com dados defidamente tratados
+    """
+
     if not isinstance(df, pd.DataFrame):
         raise Exception("Opa... parametro da função 'df' foi passado errado. df")
 
@@ -37,10 +56,22 @@ Saída:
     df_tratado.drop(columns=['Sistema OI'])
     df_tratado['MES_SAFRA'] = pd.to_datetime(df_tratado['Safra'], format='%Y-%m-%d %H:%M:%S', errors='coerce')
     df_tratado['MES_SAFRA'] = df_tratado['MES_SAFRA'].dt.month.astype(str).apply(lambda x: str(int(x) + 1))
-    tipos = ['CPF', 'MEI', 'NMEI']
-    df_tratado['TIPO_CLIENTE'] = [tipos[i % 3] for i in range(len(df_tratado))]
+    
+    df_tratado = df_tratado[df_tratado['TIPO_CLIENTE'].isin(['CPF', 'MEI', 'NMEI'])]
 
-    return df_tratado
+    df_cpf = df_tratado[df_tratado['TIPO_CLIENTE'] == 'CPF']
+    df_mei = df_tratado[df_tratado['TIPO_CLIENTE'] == 'MEI']
+    df_nmei = df_tratado[df_tratado['TIPO_CLIENTE'] == 'NMEI']
+
+    df_cpf = df_cpf.reset_index(drop=True)
+    df_mei = df_mei.reset_index(drop=True)
+    df_nmei = df_nmei.reset_index(drop=True)
+
+    df_intercalado = pd.concat([df_cpf, df_mei, df_nmei], axis=1).stack().reset_index(drop=True)
+
+    df_intercalado = pd.DataFrame(df_intercalado.values.reshape(-1, len(df_tratado.columns)), columns=df_tratado.columns)
+
+    return df_intercalado
 
 def exportar_controle_qualidade(df: pd.DataFrame, path_file: str) -> str:
     """
